@@ -106,35 +106,30 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-black z-[9999] flex flex-col overflow-hidden touch-none"
+      className="fixed inset-0 bg-black z-[9999] overflow-hidden touch-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="flex items-center justify-between p-4 bg-black shadow-2xl border-b-2 border-red-500">
+      <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-3 bg-gradient-to-b from-black/80 to-transparent">
         <div className="flex items-center space-x-2">
           <img
             src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
             alt="Profile"
-            className="w-8 h-8 rounded-full object-cover ring-2 ring-pink-500"
+            className="w-7 h-7 rounded-full object-cover ring-2 ring-pink-500"
           />
-          <div>
-            <div className="font-semibold text-white text-sm">larissasilva_</div>
-            <div className="text-gray-400 text-xs">
-              {currentIndex + 1} de {feedPosts.length}
-            </div>
-          </div>
+          <div className="font-semibold text-white text-sm drop-shadow-lg">larissasilva_</div>
         </div>
         <button
           onClick={onClose}
-          className="flex items-center space-x-2 text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full px-4 py-2 ring-2 ring-white shadow-lg shadow-red-500/50 flex-shrink-0"
+          className="flex items-center space-x-1.5 text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full px-3 py-1.5 ring-2 ring-white shadow-lg shadow-red-500/50 flex-shrink-0"
         >
-          <X className="w-5 h-5 stroke-[2.5]" />
-          <span className="text-sm font-semibold">Sair</span>
+          <X className="w-4 h-4 stroke-[2.5]" />
+          <span className="text-xs font-semibold">Sair</span>
         </button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center overflow-hidden relative bg-black">
+      <div className="w-full h-full overflow-hidden relative bg-black">
         {currentPost.type === 'video' ? (
           <video
             key={currentPost.id}
@@ -176,8 +171,8 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
         )}
       </div>
 
-      <div className="p-4 bg-black shadow-2xl border-t-2 border-red-500">
-        <div className="flex items-center justify-between max-w-md mx-auto mb-3">
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+        <div className="flex items-center justify-around mb-3">
           <button
             onClick={() => handleLike(currentPost.id)}
             className="text-white active:text-pink-500 transition-colors p-2"
@@ -195,20 +190,20 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           </button>
         </div>
 
-        <div className="text-center">
-          <div className="text-white font-semibold text-sm mb-1">
+        <div className="text-left">
+          <div className="text-white font-semibold text-sm mb-1 drop-shadow-lg">
             {(likes[currentPost.id] || 0).toLocaleString('pt-BR')} curtidas
           </div>
           {currentPost.caption && (
-            <div className="text-sm text-gray-300">
-              <span className="font-semibold text-white">larissasilva_ </span>
+            <div className="text-sm text-white drop-shadow-lg">
+              <span className="font-semibold">larissasilva_ </span>
               {currentPost.caption}
             </div>
           )}
         </div>
 
-        <div className="text-center text-gray-400 text-sm mt-3">
-          Deslize ou use as setas para navegar
+        <div className="text-center text-white/60 text-xs mt-2 drop-shadow-lg">
+          {currentIndex + 1} / {feedPosts.length}
         </div>
       </div>
     </div>
