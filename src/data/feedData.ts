@@ -7,6 +7,13 @@ export interface PostData {
   comments: number;
 }
 
+export interface MediaItem {
+  id: number;
+  type: 'video' | 'image';
+  url: string;
+  thumbnail?: string;
+}
+
 export const feedPosts: PostData[] = [
   { id: 1, type: 'video', mediaUrl: 'https://s3.chefexpress.site/vortex/arquivo1.mp4', timeAgo: '1 hora', caption: 'Momento especial só pra vocês 💋', comments: 28 },
   { id: 2, type: 'video', mediaUrl: 'https://s3.chefexpress.site/vortex/arquivo2.mp4', timeAgo: '2 horas', comments: 15 },
@@ -67,4 +74,17 @@ export const feedPosts: PostData[] = [
   { id: 57, type: 'video', mediaUrl: 'https://s3.chefexpress.site/vortex/arquivo57.mp4', timeAgo: '1 semana', comments: 32 },
   { id: 58, type: 'video', mediaUrl: 'https://s3.chefexpress.site/vortex/arquivo58.mp4', timeAgo: '1 semana', comments: 52 },
   { id: 59, type: 'video', mediaUrl: 'https://s3.chefexpress.site/vortex/arquivo59.mp4', timeAgo: '1 semana', comments: 41 }
+];
+
+export const allVideos: MediaItem[] = Array.from({ length: 59 }, (_, i) => ({
+  id: i + 1,
+  type: 'video',
+  url: `https://s3.chefexpress.site/vortex/arquivo${i + 1}.mp4`
+}));
+
+export const allImages: MediaItem[] = [
+  { id: 1, type: 'image', url: 'https://s3.chefexpress.site/vortex/imagem1.jpeg' },
+  { id: 2, type: 'image', url: 'https://s3.chefexpress.site/vortex/imagem2.jpeg' },
+  { id: 3, type: 'image', url: 'https://s3.chefexpress.site/vortex/imagem3.jpeg' },
+  { id: 4, type: 'image', url: 'https://s3.chefexpress.site/vortex/imagem1.jpeg' }
 ];

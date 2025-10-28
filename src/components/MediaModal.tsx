@@ -1,13 +1,22 @@
-import React, { useEffect } from 'react';
-import { X, Heart, MessageCircle, Share, Bookmark } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { X, Heart, MessageCircle, Share, Bookmark, ChevronLeft, ChevronRight } from 'lucide-react';
+import { allVideos, allImages } from '../data/feedData';
 
 interface MediaModalProps {
-  type: 'video' | 'image';
-  mediaUrl: string | null;
+  initialIndex: number;
+  isVideo: boolean;
   onClose: () => void;
 }
 
-export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
+export function MediaModal({ initialIndex, isVideo, onClose }: MediaModalProps) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const mediaList = isVideo ? allVideos : allImages;
+  const currentMedia = mediaList[currentIndex];
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -15,10 +24,78 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
     };
   }, []);
 
-  if (!mediaUrl) return null;
+  const goToNext = useCallback(() => {
+    if (currentIndex < mediaList.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  }, [currentIndex, mediaList.length]);
+
+  const goToPrevious = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  }, [currentIndex]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 100) {
+      goToNext();
+    }
+
+    if (touchStart - touchEnd < -100) {
+      goToPrevious();
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        goToNext();
+      } else if (e.key === 'ArrowUp') {
+        goToPrevious();
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [goToNext, goToPrevious, onClose]);
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        goToNext();
+      } else if (e.deltaY < 0) {
+        goToPrevious();
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => container.removeEventListener('wheel', handleWheel);
+    }
+  }, [goToNext, goToPrevious]);
+
+  if (!currentMedia) return null;
 
   return (
-    <div className="fixed inset-0 bg-black z-[9999] flex flex-col overflow-hidden touch-none">
+    <div
+      ref={containerRef}
+      className="fixed inset-0 bg-black z-[9999] flex flex-col overflow-hidden touch-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="flex items-center justify-between p-4 bg-black shadow-2xl border-b-2 border-red-500">
         <div className="flex items-center space-x-2">
           <img
@@ -28,7 +105,9 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
           />
           <div>
             <div className="font-semibold text-white text-sm">larissasilva_</div>
-            <div className="text-gray-400 text-xs">Online</div>
+            <div className="text-gray-400 text-xs">
+              {currentIndex + 1} de {mediaList.length}
+            </div>
           </div>
         </div>
         <button
@@ -39,10 +118,11 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
         </button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center overflow-hidden">
-        {type === 'video' ? (
+      <div className="flex-1 flex items-center justify-center overflow-hidden relative">
+        {currentMedia.type === 'video' ? (
           <video
-            src={mediaUrl}
+            key={currentMedia.id}
+            src={currentMedia.url}
             className="w-full h-full object-contain"
             controls
             autoPlay
@@ -52,11 +132,30 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
           />
         ) : (
           <img
-            src={mediaUrl}
-            alt="Fullscreen"
+            key={currentMedia.id}
+            src={currentMedia.url}
+            alt={`Mídia ${currentMedia.id}`}
             className="w-full h-full object-contain"
             onContextMenu={(e) => e.preventDefault()}
           />
+        )}
+
+        {currentIndex > 0 && (
+          <button
+            onClick={goToPrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+        )}
+
+        {currentIndex < mediaList.length - 1 && (
+          <button
+            onClick={goToNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
         )}
       </div>
 
@@ -74,6 +173,10 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
           <button className="text-white active:text-yellow-500 transition-colors p-2">
             <Bookmark className="w-7 h-7" />
           </button>
+        </div>
+
+        <div className="text-center text-gray-400 text-sm mt-2">
+          Deslize ou use as setas para navegar
         </div>
       </div>
     </div>

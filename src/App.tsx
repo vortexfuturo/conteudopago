@@ -20,7 +20,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('feed');
   const [activeMediaTab, setActiveMediaTab] = useState('videos');
   const [showFullBio, setShowFullBio] = useState(false);
-  const [fullscreenMedia, setFullscreenMedia] = useState<{ type: 'video' | 'image', url: string } | null>(null);
+  const [fullscreenMedia, setFullscreenMedia] = useState<{ index: number, isVideo: boolean } | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeCounts, setLikeCounts] = useState<{[key: number]: number}>({});
 
@@ -85,12 +85,9 @@ function App() {
     setLikeCounts(newLikeCounts);
   };
 
-  const handleVideoDoubleClick = (postId: number, videoUrl: string, e: React.MouseEvent) => {
+  const handleVideoDoubleClick = (postId: number, e: React.MouseEvent) => {
     e.preventDefault();
     handleLike(postId);
-    setTimeout(() => {
-      setFullscreenMedia({ type: 'video', url: videoUrl });
-    }, 100);
   };
 
   if (currentRoute === '/painel') {
@@ -141,10 +138,10 @@ function App() {
                 caption={post.caption}
                 isLiked={likedPosts.has(post.id)}
                 onLike={() => handleLike(post.id)}
-                onMediaClick={() => setFullscreenMedia({ type: post.type, url: post.mediaUrl })}
+                onMediaClick={() => {}}
                 onDoubleClick={
                   post.type === 'video'
-                    ? (e) => handleVideoDoubleClick(post.id, post.mediaUrl, e)
+                    ? (e) => handleVideoDoubleClick(post.id, e)
                     : () => handleLike(post.id)
                 }
               />
@@ -154,7 +151,7 @@ function App() {
           <MediaGrid
             activeTab={activeMediaTab}
             onTabChange={setActiveMediaTab}
-            onMediaClick={(type, url) => setFullscreenMedia({ type, url })}
+            onMediaClick={(index) => setFullscreenMedia({ index, isVideo: activeMediaTab === 'videos' })}
           />
         ) : (
           <LockedContent />
@@ -162,8 +159,8 @@ function App() {
 
         {fullscreenMedia && (
           <MediaModal
-            type={fullscreenMedia.type}
-            mediaUrl={fullscreenMedia.url}
+            initialIndex={fullscreenMedia.index}
+            isVideo={fullscreenMedia.isVideo}
             onClose={() => setFullscreenMedia(null)}
           />
         )}
