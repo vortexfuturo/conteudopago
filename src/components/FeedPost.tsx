@@ -28,6 +28,21 @@ export function FeedPost({
   onMediaClick,
   onDoubleClick
 }: FeedPostProps) {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  const handleVideoClick = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
   return (
     <article className="bg-black border-b border-gray-900 mb-4">
       <div className="flex items-center justify-between px-3 py-2.5">
@@ -50,18 +65,28 @@ export function FeedPost({
         </button>
       </div>
 
-      <div className="relative">
+      <div className="relative cursor-pointer" onClick={type === 'video' ? handleVideoClick : undefined}>
         {type === 'video' ? (
-          <video
-            src={mediaUrl}
-            className="w-full aspect-square object-cover bg-gray-900"
-            muted
-            loop
-            playsInline
-            onDoubleClick={onDoubleClick}
-            controlsList="nodownload"
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={mediaUrl}
+              className="w-full aspect-square object-cover bg-gray-900"
+              muted
+              loop
+              playsInline
+              onDoubleClick={onDoubleClick}
+              controlsList="nodownload"
+              onContextMenu={(e) => e.preventDefault()}
+            />
+            {!isPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                <div className="bg-black/60 backdrop-blur-sm rounded-full p-4 transition-transform hover:scale-110">
+                  <Play className="w-12 h-12 text-white fill-current" />
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <img
             src={mediaUrl}
