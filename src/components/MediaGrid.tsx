@@ -51,8 +51,7 @@ export function MediaGrid({ activeTab, onTabChange, onMediaClick }: MediaGridPro
             {videos.map((num) => (
               <div
                 key={num}
-                className="relative cursor-pointer group overflow-hidden aspect-[9/16] bg-gray-900"
-                onClick={() => onMediaClick('video', `https://s3.chefexpress.site/vortex/arquivo${num}.mp4`)}
+                className="relative overflow-hidden aspect-[9/16] bg-gray-900"
               >
                 <video
                   src={`https://s3.chefexpress.site/vortex/arquivo${num}.mp4`}
@@ -78,8 +77,7 @@ export function MediaGrid({ activeTab, onTabChange, onMediaClick }: MediaGridPro
             {images.map((img, idx) => (
               <div
                 key={idx}
-                className="relative cursor-pointer group overflow-hidden aspect-square bg-gray-900"
-                onClick={() => onMediaClick('image', img)}
+                className="relative overflow-hidden aspect-square bg-gray-900"
               >
                 <img
                   src={img}

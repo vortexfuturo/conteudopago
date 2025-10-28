@@ -50,25 +50,18 @@ export function FeedPost({
         </button>
       </div>
 
-      <div className="relative cursor-pointer group" onClick={onMediaClick}>
+      <div className="relative">
         {type === 'video' ? (
-          <>
-            <video
-              src={mediaUrl}
-              className="w-full aspect-square object-cover bg-gray-900"
-              muted
-              loop
-              playsInline
-              onDoubleClick={onDoubleClick}
-              controlsList="nodownload"
-              onContextMenu={(e) => e.preventDefault()}
-            />
-            <div className="absolute inset-0 flex items-center justify-center transition-opacity">
-              <div className="bg-black/40 backdrop-blur-sm rounded-full p-3 group-hover:scale-110 transition-transform">
-                <Play className="w-8 h-8 text-white fill-current" />
-              </div>
-            </div>
-          </>
+          <video
+            src={mediaUrl}
+            className="w-full aspect-square object-cover bg-gray-900"
+            muted
+            loop
+            playsInline
+            onDoubleClick={onDoubleClick}
+            controlsList="nodownload"
+            onContextMenu={(e) => e.preventDefault()}
+          />
         ) : (
           <img
             src={mediaUrl}
