@@ -61,12 +61,6 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
       </div>
 
       <div className="p-4 bg-black shadow-2xl border-t-2 border-red-500">
-        <button
-          onClick={onClose}
-          className="w-full bg-red-600 active:bg-red-700 text-white font-black text-xl py-5 px-6 rounded-2xl shadow-2xl shadow-red-500/50 mb-4 uppercase tracking-wider ring-4 ring-red-500/30"
-        >
-          ✕ FECHAR ✕
-        </button>
         <div className="flex items-center justify-between max-w-md mx-auto">
           <button className="text-white active:text-pink-500 transition-colors p-2">
             <Heart className="w-7 h-7" />
