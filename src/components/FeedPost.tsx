@@ -65,7 +65,7 @@ export function FeedPost({
         </button>
       </div>
 
-      <div className="relative cursor-pointer" onClick={type === 'video' ? handleVideoClick : onMediaClick}>
+      <div className="relative cursor-pointer" onClick={onMediaClick}>
         {type === 'video' ? (
           <>
             <video
@@ -78,7 +78,10 @@ export function FeedPost({
               onDoubleClick={onDoubleClick}
               controlsList="nodownload"
               onContextMenu={(e) => e.preventDefault()}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleVideoClick();
+              }}
             />
             {!isPlaying && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
