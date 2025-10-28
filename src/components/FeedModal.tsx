@@ -129,12 +129,12 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
         </button>
       </div>
 
-      <div className="w-full h-full overflow-hidden relative bg-black">
+      <div className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center">
         {currentPost.type === 'video' ? (
           <video
             key={currentPost.id}
             src={currentPost.mediaUrl}
-            className="w-full h-full object-cover"
+            className="min-w-full min-h-full max-w-full max-h-full object-contain"
             controls
             autoPlay
             loop
@@ -147,7 +147,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             key={currentPost.id}
             src={currentPost.mediaUrl}
             alt={`Post ${currentPost.id}`}
-            className="w-full h-full object-cover"
+            className="min-w-full min-h-full max-w-full max-h-full object-contain"
             onContextMenu={(e) => e.preventDefault()}
           />
         )}
