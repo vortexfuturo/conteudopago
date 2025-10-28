@@ -139,7 +139,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           <video
             key={currentPost.id}
             src={currentPost.mediaUrl}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
             controls
             autoPlay
             loop
@@ -152,7 +152,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             key={currentPost.id}
             src={currentPost.mediaUrl}
             alt={`Post ${currentPost.id}`}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
             onContextMenu={(e) => e.preventDefault()}
           />
         )}
