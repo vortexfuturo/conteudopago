@@ -112,9 +112,10 @@ export function MediaModal({ initialIndex, isVideo, onClose }: MediaModalProps) 
         </div>
         <button
           onClick={onClose}
-          className="text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full p-3 ring-2 ring-white shadow-lg shadow-red-500/50 flex-shrink-0"
+          className="flex items-center space-x-2 text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full px-4 py-2 ring-2 ring-white shadow-lg shadow-red-500/50 flex-shrink-0"
         >
-          <X className="w-9 h-9 stroke-[3.5]" />
+          <X className="w-5 h-5 stroke-[2.5]" />
+          <span className="text-sm font-semibold">Sair</span>
         </button>
       </div>
 
