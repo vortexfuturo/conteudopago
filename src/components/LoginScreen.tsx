@@ -204,7 +204,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   </button>
                 </form>
 
-                <div className="mt-4">
+                <div className="mt-4 space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => onLogin('guest@privacy.local')}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl"
+                  >
+                    ENTRAR SEM CRIAR CONTA
+                  </button>
+
                   <details className="text-sm text-gray-600">
                     <summary className="cursor-pointer text-pink-600 hover:text-pink-700">
                       Tenho senha antiga (código numérico)
