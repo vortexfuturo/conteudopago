@@ -59,6 +59,8 @@ export function MediaGrid({ activeTab, onTabChange, onMediaClick }: MediaGridPro
                   className="w-full h-full object-cover"
                   muted
                   playsInline
+                  controlsList="nodownload"
+                  onContextMenu={(e) => e.preventDefault()}
                 />
                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                   <div className="bg-black/50 backdrop-blur-sm rounded-full p-2">
@@ -83,6 +85,7 @@ export function MediaGrid({ activeTab, onTabChange, onMediaClick }: MediaGridPro
                   src={img}
                   alt={`Foto ${idx + 1}`}
                   className="w-full h-full object-cover"
+                  onContextMenu={(e) => e.preventDefault()}
                 />
               </div>
             ))}

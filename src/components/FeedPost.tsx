@@ -60,6 +60,8 @@ export function FeedPost({
               loop
               playsInline
               onDoubleClick={onDoubleClick}
+              controlsList="nodownload"
+              onContextMenu={(e) => e.preventDefault()}
             />
             <div className="absolute inset-0 flex items-center justify-center transition-opacity">
               <div className="bg-black/40 backdrop-blur-sm rounded-full p-3 group-hover:scale-110 transition-transform">
@@ -73,6 +75,7 @@ export function FeedPost({
             alt="Post"
             className="w-full aspect-square object-cover bg-gray-900"
             onDoubleClick={onDoubleClick}
+            onContextMenu={(e) => e.preventDefault()}
           />
         )}
 

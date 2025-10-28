@@ -40,12 +40,15 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
             controls
             autoPlay
             playsInline
+            controlsList="nodownload"
+            onContextMenu={(e) => e.preventDefault()}
           />
         ) : (
           <img
             src={mediaUrl}
             alt="Fullscreen"
             className="w-full h-full object-contain"
+            onContextMenu={(e) => e.preventDefault()}
           />
         )}
       </div>
