@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Heart, MessageCircle, Share, Bookmark } from 'lucide-react';
 
 interface MediaModalProps {
@@ -8,11 +8,18 @@ interface MediaModalProps {
 }
 
 export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   if (!mediaUrl) return null;
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col">
-      <div className="flex items-center justify-between p-3 bg-black shadow-lg relative z-10">
+    <div className="fixed inset-0 bg-black z-[9999] flex flex-col overflow-hidden touch-none">
+      <div className="flex items-center justify-between p-4 bg-black shadow-2xl border-b-2 border-red-500">
         <div className="flex items-center space-x-2">
           <img
             src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
@@ -26,13 +33,13 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
         </div>
         <button
           onClick={onClose}
-          className="text-white active:text-red-500 transition-colors bg-red-600/30 active:bg-red-600/50 backdrop-blur-sm rounded-full p-2.5 ring-2 ring-red-500 shadow-lg shadow-red-500/50"
+          className="text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full p-3 ring-2 ring-white shadow-lg shadow-red-500/50 flex-shrink-0"
         >
-          <X className="w-8 h-8 stroke-[3]" />
+          <X className="w-9 h-9 stroke-[3.5]" />
         </button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center overflow-hidden">
         {type === 'video' ? (
           <video
             src={mediaUrl}
@@ -53,12 +60,12 @@ export function MediaModal({ type, mediaUrl, onClose }: MediaModalProps) {
         )}
       </div>
 
-      <div className="p-3 pb-safe bg-black shadow-2xl relative z-10">
+      <div className="p-4 bg-black shadow-2xl border-t-2 border-red-500">
         <button
           onClick={onClose}
-          className="w-full bg-gradient-to-r from-red-600 to-red-500 active:from-red-700 active:to-red-600 text-white font-bold text-lg py-4 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-red-500/50 mb-3"
+          className="w-full bg-red-600 active:bg-red-700 text-white font-black text-xl py-5 px-6 rounded-2xl shadow-2xl shadow-red-500/50 mb-4 uppercase tracking-wider ring-4 ring-red-500/30"
         >
-          FECHAR
+          ✕ FECHAR ✕
         </button>
         <div className="flex items-center justify-between max-w-md mx-auto">
           <button className="text-white active:text-pink-500 transition-colors p-2">
