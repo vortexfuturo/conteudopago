@@ -1,0 +1,212 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export interface PurchaseEvent {
+  id?: string;
+  user_email: string;
+  event_type: string;
+  value: number;
+  currency: string;
+  created_at?: string;
+  user_agent?: string;
+  ip_address?: string;
+}
+
+function generateSessionId(): string {
+  let sessionId = localStorage.getItem('privacy_session_id');
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    localStorage.setItem('privacy_session_id', sessionId);
+  }
+  return sessionId;
+}
+
+export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'Purchase'): Promise<boolean> {
+  try {
+    const sessionId = generateSessionId();
+    const uniqueIdentifier = `${sessionId}_${navigator.userAgent}`;
+
+    const { data: existingEvent } = await supabase
+      .from('purchase_events')
+      .select('id, event_type, created_at')
+      .eq('user_email', uniqueIdentifier)
+      .maybeSingle();
+
+    if (existingEvent) {
+      console.log(`Event already fired for this session: ${existingEvent.event_type}`);
+      return false;
+    }
+
+    const eventData: PurchaseEvent = {
+      user_email: uniqueIdentifier,
+      event_type: eventType,
+      value: 10.00,
+      currency: 'BRL',
+      user_agent: navigator.userAgent,
+    };
+
+    const { error } = await supabase
+      .from('purchase_events')
+      .insert([eventData]);
+
+    if (error) {
+      console.error(`Error logging ${eventType} event:`, error);
+      return false;
+    }
+
+    console.log(`${eventType} event logged successfully`);
+    return true;
+  } catch (error) {
+    console.error(`Error in logEvent:`, error);
+    return false;
+  }
+}
+
+export async function logPurchaseEvent(email: string): Promise<boolean> {
+  return logEvent(email, 'Purchase');
+}
+
+export async function logInitiateCheckoutEvent(email: string): Promise<boolean> {
+  return logEvent(email, 'InitiateCheckout');
+}
+
+export interface UserRegistration {
+  id?: string;
+  full_name: string;
+  cpf: string;
+  email: string;
+  password_hash: string;
+  created_at?: string;
+  last_login?: string;
+  is_active?: boolean;
+}
+
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function syncToGoogleSheets(userData: UserRegistration): Promise<void> {
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    const functionUrl = `${supabaseUrl}/functions/v1/sync-to-sheets`;
+
+    await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+      },
+      body: JSON.stringify({ userData }),
+    });
+  } catch (error) {
+    console.error('Error syncing to Google Sheets:', error);
+  }
+}
+
+export async function registerUser(
+  fullName: string,
+  cpf: string,
+  email: string,
+  password: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const cpfClean = cpf.replace(/\D/g, '');
+
+    if (cpfClean.length !== 11) {
+      return { success: false, error: 'CPF inválido' };
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { success: false, error: 'E-mail inválido' };
+    }
+
+    if (password.length < 6) {
+      return { success: false, error: 'Senha deve ter no mínimo 6 caracteres' };
+    }
+
+    const passwordHash = await hashPassword(password);
+
+    const userData: UserRegistration = {
+      full_name: fullName,
+      cpf: cpfClean,
+      email: email.toLowerCase(),
+      password_hash: passwordHash,
+      created_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('user_registrations')
+      .insert([userData]);
+
+    if (error) {
+      if (error.code === '23505') {
+        if (error.message.includes('cpf')) {
+          return { success: false, error: 'CPF já cadastrado' };
+        }
+        if (error.message.includes('email')) {
+          return { success: false, error: 'E-mail já cadastrado' };
+        }
+      }
+      console.error('Error registering user:', error);
+      return { success: false, error: 'Erro ao realizar cadastro' };
+    }
+
+    syncToGoogleSheets(userData);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in registerUser:', error);
+    return { success: false, error: 'Erro ao realizar cadastro' };
+  }
+}
+
+export async function loginUser(
+  email: string,
+  password: string
+): Promise<{ success: boolean; user?: UserRegistration; error?: string }> {
+  try {
+    const passwordHash = await hashPassword(password);
+
+    const { data, error } = await supabase
+      .from('user_registrations')
+      .select('*')
+      .eq('email', email.toLowerCase())
+      .eq('password_hash', passwordHash)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error logging in:', error);
+      return { success: false, error: 'Erro ao realizar login' };
+    }
+
+    if (!data) {
+      return { success: false, error: 'E-mail ou senha incorretos' };
+    }
+
+    await supabase
+      .from('user_registrations')
+      .update({ last_login: new Date().toISOString() })
+      .eq('id', data.id);
+
+    return { success: true, user: data };
+  } catch (error) {
+    console.error('Error in loginUser:', error);
+    return { success: false, error: 'Erro ao realizar login' };
+  }
+}
