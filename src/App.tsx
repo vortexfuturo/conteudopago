@@ -7,6 +7,7 @@ import { ProfileHeader } from './components/ProfileHeader';
 import { NavigationTabs } from './components/NavigationTabs';
 import { FeedPost } from './components/FeedPost';
 import { MediaModal } from './components/MediaModal';
+import { FeedModal } from './components/FeedModal';
 import { BottomNavigation } from './components/BottomNavigation';
 import { feedPosts } from './data/feedData';
 import { LoginScreen } from './components/LoginScreen';
@@ -21,6 +22,7 @@ function App() {
   const [activeMediaTab, setActiveMediaTab] = useState('videos');
   const [showFullBio, setShowFullBio] = useState(false);
   const [fullscreenMedia, setFullscreenMedia] = useState<{ index: number, isVideo: boolean } | null>(null);
+  const [feedModalIndex, setFeedModalIndex] = useState<number | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeCounts, setLikeCounts] = useState<{[key: number]: number}>({});
 
@@ -138,7 +140,7 @@ function App() {
                 caption={post.caption}
                 isLiked={likedPosts.has(post.id)}
                 onLike={() => handleLike(post.id)}
-                onMediaClick={() => {}}
+                onMediaClick={() => setFeedModalIndex(feedPosts.findIndex(p => p.id === post.id))}
                 onDoubleClick={
                   post.type === 'video'
                     ? (e) => handleVideoDoubleClick(post.id, e)
@@ -162,6 +164,13 @@ function App() {
             initialIndex={fullscreenMedia.index}
             isVideo={fullscreenMedia.isVideo}
             onClose={() => setFullscreenMedia(null)}
+          />
+        )}
+
+        {feedModalIndex !== null && (
+          <FeedModal
+            initialIndex={feedModalIndex}
+            onClose={() => setFeedModalIndex(null)}
           />
         )}
 

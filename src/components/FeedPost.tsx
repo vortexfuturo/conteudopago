@@ -65,7 +65,7 @@ export function FeedPost({
         </button>
       </div>
 
-      <div className="relative cursor-pointer" onClick={type === 'video' ? handleVideoClick : undefined}>
+      <div className="relative cursor-pointer" onClick={type === 'video' ? handleVideoClick : onMediaClick}>
         {type === 'video' ? (
           <>
             <video
@@ -78,9 +78,10 @@ export function FeedPost({
               onDoubleClick={onDoubleClick}
               controlsList="nodownload"
               onContextMenu={(e) => e.preventDefault()}
+              onClick={(e) => e.stopPropagation()}
             />
             {!isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                 <div className="bg-black/60 backdrop-blur-sm rounded-full p-4 transition-transform hover:scale-110">
                   <Play className="w-12 h-12 text-white fill-current" />
                 </div>
@@ -138,10 +139,6 @@ export function FeedPost({
               <span className="text-gray-300">{caption}</span>
             </div>
           )}
-
-          <button className="text-sm text-gray-400 hover:text-gray-300 transition-colors">
-            Ver todos os {comments} comentários
-          </button>
         </div>
       </div>
     </article>
