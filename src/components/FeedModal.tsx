@@ -39,11 +39,23 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   const handleVideoClick = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentPost.type === 'video' && !document.fullscreenElement && videoRef.current) {
+    if (currentPost.type === 'video' && videoRef.current) {
+      const video = videoRef.current;
+
+      if (document.fullscreenElement) {
+        return;
+      }
+
       try {
-        await videoRef.current.requestFullscreen();
+        if (video.requestFullscreen) {
+          await video.requestFullscreen();
+        } else if ((video as any).webkitRequestFullscreen) {
+          await (video as any).webkitRequestFullscreen();
+        } else if ((video as any).webkitEnterFullscreen) {
+          (video as any).webkitEnterFullscreen();
+        }
       } catch (err) {
-        console.log('Fullscreen not available');
+        console.log('Fullscreen error:', err);
       }
     }
   }, [currentPost.type]);
@@ -172,19 +184,23 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
       <div className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center">
         {currentPost.type === 'video' ? (
-          <video
-            ref={videoRef}
-            key={currentPost.id}
-            src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
-            className="w-full h-full object-contain cursor-pointer"
-            controls
-            autoPlay
-            loop
-            playsInline
-            controlsList="nodownload"
-            onContextMenu={(e) => e.preventDefault()}
+          <div
+            className="w-full h-full flex items-center justify-center"
             onClick={handleVideoClick}
-          />
+          >
+            <video
+              ref={videoRef}
+              key={currentPost.id}
+              src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
+              className="w-full h-full object-contain"
+              controls
+              autoPlay
+              loop
+              playsInline
+              controlsList="nodownload"
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
         ) : currentPost.type === 'carousel' && Array.isArray(currentPost.mediaUrl) ? (
           <div className="relative w-full h-full flex items-center justify-center">
             <img
