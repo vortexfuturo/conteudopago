@@ -176,7 +176,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             ref={videoRef}
             key={currentPost.id}
             src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
-            className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
+            className="w-full h-full object-contain cursor-pointer"
             controls
             autoPlay
             loop
