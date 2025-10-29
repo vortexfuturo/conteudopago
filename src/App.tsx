@@ -25,6 +25,8 @@ function App() {
   const [feedModalIndex, setFeedModalIndex] = useState<number | null>(null);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeCounts, setLikeCounts] = useState<{[key: number]: number}>({});
+  const [sortedPosts, setSortedPosts] = useState(feedPosts);
+  const [loadingStates, setLoadingStates] = useState<{[key: number]: boolean}>({});
 
   useEffect(() => {
     const initialLikes: {[key: number]: number} = {};
@@ -32,6 +34,41 @@ function App() {
       initialLikes[post.id] = Math.floor(Math.random() * 400) + 150;
     });
     setLikeCounts(initialLikes);
+
+    const loadTimes: {[key: number]: number} = {};
+    const loadingState: {[key: number]: boolean} = {};
+
+    feedPosts.forEach(post => {
+      loadingState[post.id] = true;
+    });
+    setLoadingStates(loadingState);
+
+    const promises = feedPosts.map(post => {
+      return new Promise<{id: number, time: number}>((resolve) => {
+        const startTime = Date.now();
+        const element = post.type === 'video' ? new Image() : new Image();
+
+        const handleLoad = () => {
+          const loadTime = Date.now() - startTime;
+          loadTimes[post.id] = loadTime;
+          setLoadingStates(prev => ({...prev, [post.id]: false}));
+          resolve({id: post.id, time: loadTime});
+        };
+
+        element.onload = handleLoad;
+        element.onerror = handleLoad;
+        element.src = post.mediaUrl;
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      const sorted = [...feedPosts].sort((a, b) => {
+        const timeA = loadTimes[a.id] || Infinity;
+        const timeB = loadTimes[b.id] || Infinity;
+        return timeA - timeB;
+      });
+      setSortedPosts(sorted);
+    });
   }, []);
 
   useEffect(() => {
@@ -128,7 +165,7 @@ function App() {
 
         {activeTab === 'feed' ? (
           <div className="bg-black">
-            {feedPosts.map((post) => (
+            {sortedPosts.map((post) => (
               <FeedPost
                 key={post.id}
                 postId={post.id}
@@ -140,7 +177,7 @@ function App() {
                 caption={post.caption}
                 isLiked={likedPosts.has(post.id)}
                 onLike={() => handleLike(post.id)}
-                onMediaClick={() => setFeedModalIndex(feedPosts.findIndex(p => p.id === post.id))}
+                onMediaClick={() => setFeedModalIndex(sortedPosts.findIndex(p => p.id === post.id))}
                 onDoubleClick={
                   post.type === 'video'
                     ? (e) => handleVideoDoubleClick(post.id, e)
