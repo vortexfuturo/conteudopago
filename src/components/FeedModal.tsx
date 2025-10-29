@@ -269,28 +269,32 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           />
         )}
 
-        {isFullscreen && currentPost.type === 'video' && currentIndex > 0 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goToPrevious();
-            }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all z-[10000]"
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-        )}
+        {isFullscreen && currentPost.type === 'video' && (
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-24 flex items-center gap-6 z-[10000]">
+            {currentIndex > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPrevious();
+                }}
+                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-4 backdrop-blur-sm transition-all shadow-lg ring-2 ring-white/20 hover:ring-white/40 active:scale-95"
+              >
+                <ChevronLeft className="w-8 h-8 stroke-[2.5]" />
+              </button>
+            )}
 
-        {isFullscreen && currentPost.type === 'video' && currentIndex < feedPosts.length - 1 && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goToNext();
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all z-[10000]"
-          >
-            <ChevronRight className="w-8 h-8" />
-          </button>
+            {currentIndex < feedPosts.length - 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNext();
+                }}
+                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-4 backdrop-blur-sm transition-all shadow-lg ring-2 ring-white/20 hover:ring-white/40 active:scale-95"
+              >
+                <ChevronRight className="w-8 h-8 stroke-[2.5]" />
+              </button>
+            )}
+          </div>
         )}
 
         {isFullscreen && (
