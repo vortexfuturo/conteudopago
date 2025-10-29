@@ -28,21 +28,8 @@ export function FeedPost({
   onMediaClick,
   onDoubleClick
 }: FeedPostProps) {
-  const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const videoRef = React.useRef<HTMLVideoElement>(null);
-
-  const handleVideoClick = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        videoRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
 
   return (
     <article className="bg-black border-b border-gray-900 mb-4">
@@ -66,7 +53,7 @@ export function FeedPost({
         </button>
       </div>
 
-      <div className="relative cursor-pointer" onClick={onMediaClick}>
+      <div className="relative cursor-pointer" onClick={type === 'video' ? onMediaClick : onMediaClick}>
         {type === 'video' ? (
           <>
             <video
@@ -79,18 +66,12 @@ export function FeedPost({
               onDoubleClick={onDoubleClick}
               controlsList="nodownload"
               onContextMenu={(e) => e.preventDefault()}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleVideoClick();
-              }}
             />
-            {!isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                <div className="bg-black/60 backdrop-blur-sm rounded-full p-4 transition-transform hover:scale-110">
-                  <Play className="w-12 h-12 text-white fill-current" />
-                </div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <div className="bg-black/60 backdrop-blur-sm rounded-full p-4 transition-transform hover:scale-110">
+                <Play className="w-12 h-12 text-white fill-current" />
               </div>
-            )}
+            </div>
           </>
         ) : type === 'carousel' && Array.isArray(mediaUrl) ? (
           <>

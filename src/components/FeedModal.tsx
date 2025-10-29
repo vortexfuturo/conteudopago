@@ -49,8 +49,10 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
       try {
         if (video.requestFullscreen) {
           await video.requestFullscreen();
+          video.play();
         } else if ((video as any).webkitRequestFullscreen) {
           await (video as any).webkitRequestFullscreen();
+          video.play();
         } else if ((video as any).webkitEnterFullscreen) {
           (video as any).webkitEnterFullscreen();
         }
@@ -194,7 +196,6 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
               src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
               className="w-full h-full object-contain"
               controls
-              autoPlay
               loop
               playsInline
               controlsList="nodownload"
