@@ -39,14 +39,14 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   const handleVideoClick = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!document.fullscreenElement && containerRef.current) {
+    if (currentPost.type === 'video' && !document.fullscreenElement && containerRef.current) {
       try {
         await containerRef.current.requestFullscreen();
       } catch (err) {
         console.log('Fullscreen not available');
       }
     }
-  }, []);
+  }, [currentPost.type]);
 
   const exitFullscreen = useCallback(async () => {
     if (document.fullscreenElement) {
@@ -242,25 +242,25 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           />
         )}
 
-        {currentPost.type !== 'carousel' && currentIndex > 0 && (
+        {currentIndex > 0 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToPrevious();
             }}
-            className={`absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
+            className={`absolute left-4 ${currentPost.type === 'carousel' ? 'top-1/4' : 'top-1/2'} -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
         )}
 
-        {currentPost.type !== 'carousel' && currentIndex < feedPosts.length - 1 && (
+        {currentIndex < feedPosts.length - 1 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToNext();
             }}
-            className={`absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
+            className={`absolute right-4 ${currentPost.type === 'carousel' ? 'top-1/4' : 'top-1/2'} -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronRight className="w-8 h-8" />
           </button>
