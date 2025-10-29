@@ -84,25 +84,13 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   const goToNext = useCallback(() => {
     if (currentIndex < feedPosts.length - 1) {
-      let nextIndex = currentIndex + 1;
-      while (nextIndex < feedPosts.length && feedPosts[nextIndex].type !== 'video') {
-        nextIndex++;
-      }
-      if (nextIndex < feedPosts.length) {
-        setCurrentIndex(nextIndex);
-      }
+      setCurrentIndex(prev => prev + 1);
     }
   }, [currentIndex]);
 
   const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
-      let prevIndex = currentIndex - 1;
-      while (prevIndex >= 0 && feedPosts[prevIndex].type !== 'video') {
-        prevIndex--;
-      }
-      if (prevIndex >= 0) {
-        setCurrentIndex(prevIndex);
-      }
+      setCurrentIndex(prev => prev - 1);
     }
   }, [currentIndex]);
 
@@ -115,12 +103,14 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
   };
 
   const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 100) {
-      goToNext();
-    }
+    if (isFullscreen || currentPost.type !== 'video') {
+      if (touchStart - touchEnd > 100) {
+        goToNext();
+      }
 
-    if (touchStart - touchEnd < -100) {
-      goToPrevious();
+      if (touchStart - touchEnd < -100) {
+        goToPrevious();
+      }
     }
   };
 
@@ -138,26 +128,31 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown') {
-        goToNext();
-      } else if (e.key === 'ArrowUp') {
-        goToPrevious();
-      } else if (e.key === 'Escape') {
+      if (isFullscreen || currentPost.type !== 'video') {
+        if (e.key === 'ArrowDown') {
+          goToNext();
+        } else if (e.key === 'ArrowUp') {
+          goToPrevious();
+        }
+      }
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToNext, goToPrevious, onClose]);
+  }, [goToNext, goToPrevious, onClose, isFullscreen, currentPost.type]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (e.deltaY > 0) {
-        goToNext();
-      } else if (e.deltaY < 0) {
-        goToPrevious();
+      if (isFullscreen || currentPost.type !== 'video') {
+        e.preventDefault();
+        if (e.deltaY > 0) {
+          goToNext();
+        } else if (e.deltaY < 0) {
+          goToPrevious();
+        }
       }
     };
 
@@ -166,7 +161,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
       container.addEventListener('wheel', handleWheel, { passive: false });
       return () => container.removeEventListener('wheel', handleWheel);
     }
-  }, [goToNext, goToPrevious]);
+  }, [goToNext, goToPrevious, isFullscreen, currentPost.type]);
 
   if (!currentPost) return null;
 
@@ -269,25 +264,25 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           />
         )}
 
-        {isFullscreen && currentPost.type === 'video' && currentIndex < feedPosts.length - 1 && (
+        {currentPost.type === 'video' && !isFullscreen && currentIndex < feedPosts.length - 1 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToNext();
             }}
-            className="absolute right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-[10000] animate-pulse hover:animate-none"
+            className="absolute right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-50 animate-pulse hover:animate-none"
           >
             <ChevronRight className="w-10 h-10 stroke-[3]" />
           </button>
         )}
 
-        {isFullscreen && currentPost.type === 'video' && currentIndex > 0 && (
+        {currentPost.type === 'video' && !isFullscreen && currentIndex > 0 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToPrevious();
             }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 bg-gradient-to-l from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-[10000]"
+            className="absolute left-6 top-1/2 -translate-y-1/2 bg-gradient-to-l from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-50"
           >
             <ChevronLeft className="w-10 h-10 stroke-[3]" />
           </button>
