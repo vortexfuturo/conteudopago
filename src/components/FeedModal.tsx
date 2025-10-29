@@ -14,8 +14,17 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
   const [likes, setLikes] = useState<{[key: number]: number}>({});
   const [isLiked, setIsLiked] = useState<{[key: number]: boolean}>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentPost = feedPosts[currentIndex];
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      videoRef.current.volume = 1.0;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [currentIndex]);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -132,12 +141,12 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
       <div className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center">
         {currentPost.type === 'video' ? (
           <video
+            ref={videoRef}
             key={currentPost.id}
             src={currentPost.mediaUrl}
             className="min-w-full min-h-full max-w-full max-h-full object-contain"
             controls
             autoPlay
-            muted={false}
             loop
             playsInline
             controlsList="nodownload"
