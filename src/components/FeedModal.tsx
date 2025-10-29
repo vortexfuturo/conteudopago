@@ -84,13 +84,25 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   const goToNext = useCallback(() => {
     if (currentIndex < feedPosts.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      let nextIndex = currentIndex + 1;
+      while (nextIndex < feedPosts.length && feedPosts[nextIndex].type !== 'video') {
+        nextIndex++;
+      }
+      if (nextIndex < feedPosts.length) {
+        setCurrentIndex(nextIndex);
+      }
     }
   }, [currentIndex]);
 
   const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      let prevIndex = currentIndex - 1;
+      while (prevIndex >= 0 && feedPosts[prevIndex].type !== 'video') {
+        prevIndex--;
+      }
+      if (prevIndex >= 0) {
+        setCurrentIndex(prevIndex);
+      }
     }
   }, [currentIndex]);
 
@@ -264,27 +276,39 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           />
         )}
 
-        {currentPost.type === 'video' && !isFullscreen && currentIndex < feedPosts.length - 1 && (
+        {currentPost.type === 'video' && !isFullscreen && (() => {
+          let nextVideoIndex = currentIndex + 1;
+          while (nextVideoIndex < feedPosts.length && feedPosts[nextVideoIndex].type !== 'video') {
+            nextVideoIndex++;
+          }
+          return nextVideoIndex < feedPosts.length;
+        })() && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToNext();
             }}
-            className="absolute right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-50 animate-pulse hover:animate-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-3 backdrop-blur-sm transition-all shadow-xl ring-2 ring-white/20 hover:ring-white/40 active:scale-95 z-50"
           >
-            <ChevronRight className="w-10 h-10 stroke-[3]" />
+            <ChevronRight className="w-6 h-6 stroke-[2.5]" />
           </button>
         )}
 
-        {currentPost.type === 'video' && !isFullscreen && currentIndex > 0 && (
+        {currentPost.type === 'video' && !isFullscreen && (() => {
+          let prevVideoIndex = currentIndex - 1;
+          while (prevVideoIndex >= 0 && feedPosts[prevVideoIndex].type !== 'video') {
+            prevVideoIndex--;
+          }
+          return prevVideoIndex >= 0;
+        })() && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               goToPrevious();
             }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 bg-gradient-to-l from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-5 backdrop-blur-sm transition-all shadow-2xl ring-4 ring-white/30 hover:ring-white/50 active:scale-95 z-50"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-gradient-to-l from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white rounded-full p-3 backdrop-blur-sm transition-all shadow-xl ring-2 ring-white/20 hover:ring-white/40 active:scale-95 z-50"
           >
-            <ChevronLeft className="w-10 h-10 stroke-[3]" />
+            <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
           </button>
         )}
 
