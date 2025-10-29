@@ -137,6 +137,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             className="min-w-full min-h-full max-w-full max-h-full object-contain"
             controls
             autoPlay
+            muted={false}
             loop
             playsInline
             controlsList="nodownload"
