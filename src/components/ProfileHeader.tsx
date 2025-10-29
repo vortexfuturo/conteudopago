@@ -25,7 +25,7 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
           <div className="flex items-center space-x-4">
             <div className="relative">
               <img
-                src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
+                src="https://s3.chefexpress.site/vortex/perfil-modelonova.jpg"
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover ring-4 ring-pink-500 ring-offset-2"
               />

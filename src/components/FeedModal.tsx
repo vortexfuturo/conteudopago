@@ -188,7 +188,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
       <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-3 bg-gradient-to-b from-black/80 to-transparent">
         <div className="flex items-center space-x-2">
           <img
-            src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
+            src="https://s3.chefexpress.site/vortex/perfil-modelonova.jpg"
             alt="Profile"
             className="w-7 h-7 rounded-full object-cover ring-2 ring-pink-500"
           />

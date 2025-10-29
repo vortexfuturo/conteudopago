@@ -122,7 +122,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="text-center mb-6">
           <div className="relative mx-auto w-28 h-28 mb-3">
             <img
-              src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
+              src="https://s3.chefexpress.site/vortex/perfil-modelonova.jpg"
               alt="Profile"
               className="w-full h-full rounded-full object-cover border-4 border-pink-500 shadow-2xl shadow-pink-500/50"
             />
