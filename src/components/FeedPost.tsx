@@ -36,7 +36,7 @@ export function FeedPost({
       <div className="flex items-center justify-between px-3 py-2.5">
         <div className="flex items-center space-x-3">
           <img
-            src="https://s3.chefexpress.site/vortex/fotodeperfil.jpg"
+            src="https://s3.chefexpress.site/vortex/perfil-modelonova.jpg"
             alt="Profile"
             className="w-8 h-8 rounded-full object-cover ring-2 ring-pink-500"
           />
