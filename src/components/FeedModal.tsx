@@ -172,28 +172,31 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
       <div className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center">
         {currentPost.type === 'video' ? (
-          <video
-            ref={videoRef}
-            key={currentPost.id}
-            src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
-            className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
-            controls
-            autoPlay
-            loop
-            playsInline
-            controlsList="nodownload"
-            onContextMenu={(e) => e.preventDefault()}
+          <div
+            className="relative w-full h-full flex items-center justify-center cursor-pointer"
             onClick={handleVideoClick}
-          />
+          >
+            <video
+              ref={videoRef}
+              key={currentPost.id}
+              src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
+              className="min-w-full min-h-full max-w-full max-h-full object-contain"
+              controls
+              autoPlay
+              loop
+              playsInline
+              controlsList="nodownload"
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
         ) : currentPost.type === 'carousel' && Array.isArray(currentPost.mediaUrl) ? (
           <div className="relative w-full h-full flex items-center justify-center">
             <img
               key={`${currentPost.id}-${carouselIndex}`}
               src={currentPost.mediaUrl[carouselIndex]}
               alt={`Carousel ${carouselIndex + 1}`}
-              className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
+              className="min-w-full min-h-full max-w-full max-h-full object-contain"
               onContextMenu={(e) => e.preventDefault()}
-              onClick={handleVideoClick}
             />
 
             {carouselIndex > 0 && (
@@ -236,9 +239,8 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             key={currentPost.id}
             src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
             alt={`Post ${currentPost.id}`}
-            className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
+            className="min-w-full min-h-full max-w-full max-h-full object-contain"
             onContextMenu={(e) => e.preventDefault()}
-            onClick={handleVideoClick}
           />
         )}
 
