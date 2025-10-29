@@ -14,6 +14,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
   const [likes, setLikes] = useState<{[key: number]: number}>({});
   const [isLiked, setIsLiked] = useState<{[key: number]: boolean}>({});
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -97,6 +98,10 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
     }
   };
 
+  useEffect(() => {
+    setCarouselIndex(0);
+  }, [currentIndex]);
+
   const handleLike = (postId: number) => {
     setIsLiked(prev => ({ ...prev, [postId]: !prev[postId] }));
     setLikes(prev => ({
@@ -170,7 +175,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           <video
             ref={videoRef}
             key={currentPost.id}
-            src={currentPost.mediaUrl}
+            src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
             className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
             controls
             autoPlay
@@ -180,10 +185,56 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             onContextMenu={(e) => e.preventDefault()}
             onClick={handleVideoClick}
           />
+        ) : currentPost.type === 'carousel' && Array.isArray(currentPost.mediaUrl) ? (
+          <div className="relative w-full h-full flex items-center justify-center">
+            <img
+              key={`${currentPost.id}-${carouselIndex}`}
+              src={currentPost.mediaUrl[carouselIndex]}
+              alt={`Carousel ${carouselIndex + 1}`}
+              className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
+              onContextMenu={(e) => e.preventDefault()}
+              onClick={handleVideoClick}
+            />
+
+            {carouselIndex > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCarouselIndex(prev => prev - 1);
+                }}
+                className={`absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : 'z-50'}`}
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+            )}
+
+            {carouselIndex < currentPost.mediaUrl.length - 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCarouselIndex(prev => prev + 1);
+                }}
+                className={`absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : 'z-50'}`}
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            )}
+
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-50">
+              {currentPost.mediaUrl.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === carouselIndex ? 'bg-white w-8' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         ) : (
           <img
             key={currentPost.id}
-            src={currentPost.mediaUrl}
+            src={typeof currentPost.mediaUrl === 'string' ? currentPost.mediaUrl : ''}
             alt={`Post ${currentPost.id}`}
             className="min-w-full min-h-full max-w-full max-h-full object-contain cursor-pointer"
             onContextMenu={(e) => e.preventDefault()}
@@ -191,7 +242,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           />
         )}
 
-        {currentIndex > 0 && (
+        {currentPost.type !== 'carousel' && currentIndex > 0 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -203,7 +254,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
           </button>
         )}
 
-        {currentIndex < feedPosts.length - 1 && (
+        {currentPost.type !== 'carousel' && currentIndex < feedPosts.length - 1 && (
           <button
             onClick={(e) => {
               e.stopPropagation();

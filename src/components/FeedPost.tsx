@@ -1,10 +1,10 @@
 import React from 'react';
-import { Heart, MessageCircle, Share, MoreHorizontal, Play, Bookmark, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share, MoreHorizontal, Play, Bookmark, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface FeedPostProps {
   postId: number;
-  type: 'video' | 'image';
-  mediaUrl: string;
+  type: 'video' | 'image' | 'carousel';
+  mediaUrl: string | string[];
   timeAgo: string;
   likes: number;
   comments: number;
@@ -29,6 +29,7 @@ export function FeedPost({
   onDoubleClick
 }: FeedPostProps) {
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const handleVideoClick = () => {
@@ -70,7 +71,7 @@ export function FeedPost({
           <>
             <video
               ref={videoRef}
-              src={mediaUrl}
+              src={typeof mediaUrl === 'string' ? mediaUrl : ''}
               className="w-full aspect-square object-cover bg-gray-900"
               muted
               loop
@@ -91,9 +92,56 @@ export function FeedPost({
               </div>
             )}
           </>
+        ) : type === 'carousel' && Array.isArray(mediaUrl) ? (
+          <>
+            <div className="relative w-full aspect-square bg-gray-900 overflow-hidden">
+              <img
+                src={mediaUrl[currentImageIndex]}
+                alt={`Slide ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover"
+                onDoubleClick={onDoubleClick}
+                onContextMenu={(e) => e.preventDefault()}
+              />
+
+              {currentImageIndex > 0 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => prev - 1);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all z-10"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+              )}
+
+              {currentImageIndex < mediaUrl.length - 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(prev => prev + 1);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all z-10"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              )}
+
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                {mediaUrl.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
         ) : (
           <img
-            src={mediaUrl}
+            src={typeof mediaUrl === 'string' ? mediaUrl : ''}
             alt="Post"
             className="w-full aspect-square object-cover bg-gray-900"
             onDoubleClick={onDoubleClick}
