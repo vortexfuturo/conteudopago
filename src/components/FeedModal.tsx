@@ -39,9 +39,9 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
   const handleVideoClick = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentPost.type === 'video' && !document.fullscreenElement && containerRef.current) {
+    if (currentPost.type === 'video' && !document.fullscreenElement && videoRef.current) {
       try {
-        await containerRef.current.requestFullscreen();
+        await videoRef.current.requestFullscreen();
       } catch (err) {
         console.log('Fullscreen not available');
       }
@@ -183,12 +183,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             playsInline
             controlsList="nodownload"
             onContextMenu={(e) => e.preventDefault()}
-            onClick={(e) => {
-              if (!(e.target as HTMLVideoElement).paused || document.pictureInPictureElement) {
-                return;
-              }
-              handleVideoClick(e);
-            }}
+            onClick={handleVideoClick}
           />
         ) : currentPost.type === 'carousel' && Array.isArray(currentPost.mediaUrl) ? (
           <div className="relative w-full h-full flex items-center justify-center">
