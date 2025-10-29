@@ -13,6 +13,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
   const [touchEnd, setTouchEnd] = useState(0);
   const [likes, setLikes] = useState<{[key: number]: number}>({});
   const [isLiked, setIsLiked] = useState<{[key: number]: boolean}>({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -25,6 +26,31 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
       videoRef.current.play().catch(() => {});
     }
   }, [currentIndex]);
+
+  const handleFullscreenChange = useCallback(() => {
+    setIsFullscreen(!!document.fullscreenElement);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, [handleFullscreenChange]);
+
+  const handleVideoPlay = useCallback(async () => {
+    if (videoRef.current && !document.fullscreenElement) {
+      try {
+        await videoRef.current.requestFullscreen();
+      } catch (err) {
+        console.log('Fullscreen not available');
+      }
+    }
+  }, []);
+
+  const exitFullscreen = useCallback(async () => {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -151,6 +177,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             playsInline
             controlsList="nodownload"
             onContextMenu={(e) => e.preventDefault()}
+            onPlay={handleVideoPlay}
           />
         ) : (
           <img
@@ -165,7 +192,7 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
         {currentIndex > 0 && (
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all"
+            className={`absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
@@ -174,9 +201,19 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
         {currentIndex < feedPosts.length - 1 && (
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all"
+            className={`absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronRight className="w-8 h-8" />
+          </button>
+        )}
+
+        {isFullscreen && (
+          <button
+            onClick={exitFullscreen}
+            className="absolute top-4 right-4 z-[10000] flex items-center space-x-1.5 text-white active:text-red-500 transition-colors bg-red-600 active:bg-red-700 rounded-full px-3 py-1.5 ring-2 ring-white shadow-lg shadow-red-500/50"
+          >
+            <X className="w-4 h-4 stroke-[2.5]" />
+            <span className="text-xs font-semibold">Sair</span>
           </button>
         )}
       </div>
