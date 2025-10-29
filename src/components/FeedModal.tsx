@@ -36,10 +36,11 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, [handleFullscreenChange]);
 
-  const handleVideoPlay = useCallback(async () => {
-    if (videoRef.current && !document.fullscreenElement) {
+  const handleVideoClick = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!document.fullscreenElement && containerRef.current) {
       try {
-        await videoRef.current.requestFullscreen();
+        await containerRef.current.requestFullscreen();
       } catch (err) {
         console.log('Fullscreen not available');
       }
@@ -164,7 +165,10 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
         </button>
       </div>
 
-      <div className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center">
+      <div
+        className="w-full h-full overflow-hidden relative bg-black flex items-center justify-center"
+        onClick={handleVideoClick}
+      >
         {currentPost.type === 'video' ? (
           <video
             ref={videoRef}
@@ -177,7 +181,6 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
             playsInline
             controlsList="nodownload"
             onContextMenu={(e) => e.preventDefault()}
-            onPlay={handleVideoPlay}
           />
         ) : (
           <img
@@ -191,7 +194,10 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
         {currentIndex > 0 && (
           <button
-            onClick={goToPrevious}
+            onClick={(e) => {
+              e.stopPropagation();
+              goToPrevious();
+            }}
             className={`absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronLeft className="w-8 h-8" />
@@ -200,7 +206,10 @@ export function FeedModal({ initialIndex, onClose }: FeedModalProps) {
 
         {currentIndex < feedPosts.length - 1 && (
           <button
-            onClick={goToNext}
+            onClick={(e) => {
+              e.stopPropagation();
+              goToNext();
+            }}
             className={`absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 backdrop-blur-sm transition-all ${isFullscreen ? 'z-[10000]' : ''}`}
           >
             <ChevronRight className="w-8 h-8" />

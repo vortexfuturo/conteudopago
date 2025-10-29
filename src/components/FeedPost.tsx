@@ -101,11 +101,6 @@ export function FeedPost({
           />
         )}
 
-        {isLiked && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <Heart className="w-24 h-24 text-white fill-current drop-shadow-2xl animate-ping" />
-          </div>
-        )}
       </div>
 
       <div className="px-3 py-2">
