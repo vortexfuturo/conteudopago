@@ -78,7 +78,60 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
 }
 
 export async function logPurchaseEvent(email: string, source: string = 'conta1'): Promise<boolean> {
-  return logEvent(email, 'Purchase', source);
+  try {
+    const userIP = await getUserIP();
+
+    // Lista de todos os 5 pixels
+    const pixels = [
+      { id: '1153949476657735', name: 'conta5' },
+      { id: '1421303535603181', name: 'conta1' },
+      { id: '636629812664247', name: 'conta2' },
+      { id: '804023795319915', name: 'conta4' },
+      { id: '825290560048721', name: 'conta3' }
+    ];
+
+    // Verifica se já existe evento para este IP
+    const { data: existingEvents, error: queryError } = await supabase
+      .from('purchase_events')
+      .select('id')
+      .eq('ip_address', userIP)
+      .limit(1);
+
+    if (queryError) {
+      console.error('Error querying events:', queryError);
+      return false;
+    }
+
+    if (existingEvents && existingEvents.length > 0) {
+      console.log('⚠️ Purchase já foi disparado anteriormente para este IP');
+      return false;
+    }
+
+    // Insere 1 registro para cada pixel (5 registros totais)
+    const eventsToInsert = pixels.map(pixel => ({
+      user_email: `${email}|${source}`,
+      event_type: `Purchase_pixel_${pixel.id}`,
+      value: 10.00,
+      currency: 'BRL',
+      user_agent: navigator.userAgent,
+      ip_address: userIP,
+    }));
+
+    const { error } = await supabase
+      .from('purchase_events')
+      .insert(eventsToInsert);
+
+    if (error) {
+      console.error('Error logging Purchase events:', error);
+      return false;
+    }
+
+    console.log(`✅ 5 eventos Purchase registrados (1 por pixel) | IP: ${userIP} | Source: ${source}`);
+    return true;
+  } catch (error) {
+    console.error('Error in logPurchaseEvent:', error);
+    return false;
+  }
 }
 
 export async function logInitiateCheckoutEvent(email: string, source: string = 'conta1'): Promise<boolean> {
