@@ -30,17 +30,14 @@
         'conta5': '1153949476657735'
       };
 
-      // Inicializa os 5 pixels COM detecção de clique, SEM PageView
+      // Desabilita eventos automáticos (PageView, etc)
+      fbq('set', 'autoConfig', false, 'all');
+
+      // Inicializa os 5 pixels SEM disparar nenhum evento automático
       const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
       pixels.forEach(pixelId => {
-        fbq('init', pixelId, {}, {
-          autoConfig: true,  // Mantém detecção automática de cliques
-          debug: false
-        });
+        fbq('init', pixelId);
       });
-
-      // Desabilita APENAS o evento PageView automático
-      fbq('set', 'agent', 'tmgoogletagmanager', '1153949476657735');
 
       // Captura parâmetro utm_source da URL
       function getUTMSource() {
@@ -52,7 +49,7 @@
       const trafficSource = getUTMSource();
       localStorage.setItem('traffic_source', trafficSource);
 
-      console.log('5 pixels ativos - Detecção de clique habilitada, PageView desabilitado');
+      console.log('5 pixels ativos - Somente Purchase manual');
 
       // Função global para disparar Purchase nos 5 pixels apenas no primeiro acesso
       window.firePurchaseEvent = async function(email) {
