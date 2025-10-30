@@ -30,13 +30,10 @@
         'conta5': '1153949476657735'
       };
 
-      // Desabilita eventos automáticos (PageView, etc)
-      fbq('set', 'autoConfig', false, 'all');
-
-      // Inicializa os 5 pixels SEM disparar nenhum evento automático
+      // Inicializa os 5 pixels com autoConfig desabilitado individualmente
       const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
       pixels.forEach(pixelId => {
-        fbq('init', pixelId);
+        fbq('init', pixelId, {}, { autoConfig: false });
       });
 
       // Captura parâmetro utm_source da URL
