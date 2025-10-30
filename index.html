@@ -49,23 +49,27 @@
 
       console.log('5 pixels ativos (sem eventos automáticos)');
 
-      // Função global para disparar Purchase nos 5 pixels após login
+      // Função global para disparar Purchase nos 5 pixels apenas no primeiro acesso
       window.firePurchaseEvent = async function(email) {
         const source = localStorage.getItem('traffic_source') || 'conta1';
 
+        // Verifica no Supabase se já foi disparado para este IP
         let shouldFire = true;
         if (window.logPurchaseToSupabase) {
           shouldFire = await window.logPurchaseToSupabase(email, source);
         }
 
+        // Só dispara se for o primeiro acesso
         if (shouldFire) {
-          // Dispara Purchase para TODOS os 5 pixels
+          // Dispara Purchase para TODOS os 5 pixels com valor de R$ 10,00
+          fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
           fbq('trackSingle', '1421303535603181', 'Purchase', {value: 10.00, currency: 'BRL'});
           fbq('trackSingle', '636629812664247', 'Purchase', {value: 10.00, currency: 'BRL'});
-          fbq('trackSingle', '825290560048721', 'Purchase', {value: 10.00, currency: 'BRL'});
           fbq('trackSingle', '804023795319915', 'Purchase', {value: 10.00, currency: 'BRL'});
-          fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('Purchase disparado para os 5 pixels | Fonte:', source);
+          fbq('trackSingle', '825290560048721', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('✅ Purchase R$ 10,00 disparado para os 5 pixels (primeiro acesso) | Fonte:', source);
+        } else {
+          console.log('⚠️ Purchase já foi disparado anteriormente para este IP');
         }
       };
     </script>
