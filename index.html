@@ -30,10 +30,7 @@
         'conta5': '1153949476657735'
       };
 
-      // Desabilita eventos automáticos GLOBALMENTE antes de inicializar
-      fbq('set', 'autoConfig', false);
-
-      // Inicializa os 5 pixels SEM disparar NENHUM evento
+      // Inicializa os 5 pixels com detecção automática de botão habilitada
       const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
       pixels.forEach(pixelId => {
         fbq('init', pixelId);
