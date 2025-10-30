@@ -30,18 +30,11 @@
         'conta5': '1153949476657735'
       };
 
-      // Inicializa TODOS os 5 pixels SEM disparar eventos automáticos
-      fbq('set', 'autoConfig', false, '1421303535603181');
-      fbq('set', 'autoConfig', false, '636629812664247');
-      fbq('set', 'autoConfig', false, '825290560048721');
-      fbq('set', 'autoConfig', false, '804023795319915');
-      fbq('set', 'autoConfig', false, '1153949476657735');
-
-      fbq('init', '1421303535603181');
-      fbq('init', '636629812664247');
-      fbq('init', '825290560048721');
-      fbq('init', '804023795319915');
-      fbq('init', '1153949476657735');
+      // Inicializa os 5 pixels sem eventos automáticos
+      const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
+      pixels.forEach(pixelId => {
+        fbq('init', pixelId, {}, { autoConfig: false, debug: false });
+      });
 
       // Captura parâmetro utm_source da URL
       function getUTMSource() {
