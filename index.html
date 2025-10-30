@@ -74,20 +74,14 @@
           // Dispara Purchase nos 5 pixels individualmente
           console.log('🎯 Disparando Purchase nos 5 pixels...');
 
-          fbq('trackSingle', '1421303535603181', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✓ Pixel 1421303535603181 disparado');
-
-          fbq('trackSingle', '636629812664247', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✓ Pixel 636629812664247 disparado');
-
-          fbq('trackSingle', '825290560048721', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✓ Pixel 825290560048721 disparado');
-
-          fbq('trackSingle', '804023795319915', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✓ Pixel 804023795319915 disparado');
-
-          fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✓ Pixel 1153949476657735 disparado');
+          // Dispara cada pixel individualmente
+          PIXELS.forEach(pixelId => {
+            fbq('trackSingle', pixelId, 'Purchase', {
+              value: 10.00,
+              currency: 'BRL'
+            });
+            console.log(`✓ Purchase disparado no pixel: ${pixelId}`);
+          });
 
           console.log('✅ Purchase R$ 10,00 disparado em TODOS os 5 pixels | Fonte:', source);
         } else {
