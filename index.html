@@ -43,11 +43,13 @@
       function initializePixels() {
         return new Promise((resolve) => {
           if (!pixelsInitialized) {
-            PIXELS.forEach(pixelId => {
+            console.log('🔄 Inicializando 5 pixels...');
+            PIXELS.forEach((pixelId, index) => {
               fbq('init', pixelId, {}, { autoConfig: false });
+              console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
             });
             pixelsInitialized = true;
-            console.log('✓ Pixels inicializados');
+            console.log('✅ TODOS os 5 pixels inicializados com sucesso!');
             // Aguarda um momento para garantir que os pixels estão prontos
             setTimeout(resolve, 100);
           } else {
@@ -72,18 +74,26 @@
           await initializePixels();
 
           // Dispara Purchase nos 5 pixels individualmente
-          console.log('🎯 Disparando Purchase nos 5 pixels...');
+          console.log('🎯 Disparando evento Purchase nos 5 pixels...');
+          console.log('📊 Detalhes: Valor R$ 10,00 | Moeda: BRL');
 
           // Dispara cada pixel individualmente
-          PIXELS.forEach(pixelId => {
+          PIXELS.forEach((pixelId, index) => {
             fbq('trackSingle', pixelId, 'Purchase', {
               value: 10.00,
               currency: 'BRL'
             });
-            console.log(`✓ Purchase disparado no pixel: ${pixelId}`);
+            console.log(`  ✅ Pixel ${index + 1}/5 - Purchase enviado: ${pixelId}`);
           });
 
-          console.log('✅ Purchase R$ 10,00 disparado em TODOS os 5 pixels | Fonte:', source);
+          console.log('');
+          console.log('🎉 RESUMO: Purchase de R$ 10,00 disparado com sucesso nos 5 pixels!');
+          console.log('📍 Fonte de tráfego:', source);
+          console.log('');
+          console.log('IDs dos pixels que receberam o evento:');
+          PIXELS.forEach((pixelId, index) => {
+            console.log(`  ${index + 1}. ${pixelId}`);
+          });
         } else {
           console.log('⚠️ Purchase bloqueado - IP já disparou anteriormente');
         }
