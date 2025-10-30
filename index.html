@@ -39,15 +39,21 @@
 
       console.log('✓ Pixels prontos - Aguardando clique do usuário para inicializar');
 
-      // Função para inicializar pixels SOMENTE quando necessário
+      // Função para inicializar pixels e aguardar
       function initializePixels() {
-        if (!pixelsInitialized) {
-          PIXELS.forEach(pixelId => {
-            fbq('init', pixelId, {}, { autoConfig: false });
-          });
-          pixelsInitialized = true;
-          console.log('✓ Pixels inicializados no momento do clique');
-        }
+        return new Promise((resolve) => {
+          if (!pixelsInitialized) {
+            PIXELS.forEach(pixelId => {
+              fbq('init', pixelId, {}, { autoConfig: false });
+            });
+            pixelsInitialized = true;
+            console.log('✓ Pixels inicializados');
+            // Aguarda um momento para garantir que os pixels estão prontos
+            setTimeout(resolve, 100);
+          } else {
+            resolve();
+          }
+        });
       }
 
       // Função para disparar Purchase MANUALMENTE (chamada no clique dos botões)
@@ -62,16 +68,28 @@
 
         // Dispara somente se for primeira vez deste IP
         if (shouldFire) {
-          // Inicializa pixels imediatamente antes do disparo
-          initializePixels();
+          // Inicializa pixels e aguarda estarem prontos
+          await initializePixels();
 
           // Dispara Purchase nos 5 pixels individualmente
-          fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('🎯 Disparando Purchase nos 5 pixels...');
+
           fbq('trackSingle', '1421303535603181', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('✓ Pixel 1421303535603181 disparado');
+
           fbq('trackSingle', '636629812664247', 'Purchase', {value: 10.00, currency: 'BRL'});
-          fbq('trackSingle', '804023795319915', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('✓ Pixel 636629812664247 disparado');
+
           fbq('trackSingle', '825290560048721', 'Purchase', {value: 10.00, currency: 'BRL'});
-          console.log('✅ Purchase disparado nos 5 pixels | Valor: R$ 10,00 | Fonte:', source);
+          console.log('✓ Pixel 825290560048721 disparado');
+
+          fbq('trackSingle', '804023795319915', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('✓ Pixel 804023795319915 disparado');
+
+          fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
+          console.log('✓ Pixel 1153949476657735 disparado');
+
+          console.log('✅ Purchase R$ 10,00 disparado em TODOS os 5 pixels | Fonte:', source);
         } else {
           console.log('⚠️ Purchase bloqueado - IP já disparou anteriormente');
         }
