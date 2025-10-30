@@ -142,6 +142,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               <>
                 <div className="mb-4">
                   <button
+                    type="button"
+                    onClick={() => onLogin('guest@privacy.local')}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 text-sm mb-3"
+                  >
+                    ENTRAR SEM CRIAR CONTA
+                  </button>
+
+                  <button
                     onClick={() => setShowRegisterForm(true)}
                     className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 mb-3 text-sm"
                   >
@@ -202,14 +210,6 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 </form>
 
                 <div className="mt-4 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => onLogin('guest@privacy.local')}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 text-sm"
-                  >
-                    ENTRAR SEM CRIAR CONTA
-                  </button>
-
                   <details className="text-sm text-gray-600">
                     <summary className="cursor-pointer text-pink-600 hover:text-pink-700 py-1">
                       Tenho senha antiga (código numérico)
