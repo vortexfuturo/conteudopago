@@ -21,38 +21,57 @@
       }(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
 
-      // Inicializa os pixels
-      fbq('init', '1421303535603181');
-      fbq('init', '636629812664247');
-      fbq('init', '825290560048721');
-      fbq('init', '804023795319915');
-      fbq('init', '1153949476657735');
+      // Mapa de pixels por conta
+      const PIXEL_MAP = {
+        'conta1': '1421303535603181',
+        'conta2': '636629812664247',
+        'conta3': '825290560048721',
+        'conta4': '804023795319915',
+        'conta5': '1153949476657735'
+      };
+
+      // Inicializa todos os pixels
+      Object.values(PIXEL_MAP).forEach(pixelId => {
+        fbq('init', pixelId);
+      });
+
+      // Captura parâmetro utm_source da URL
+      function getUTMSource() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('utm_source') || 'conta1';
+      }
+
+      // Armazena a fonte de tráfego
+      const trafficSource = getUTMSource();
+      localStorage.setItem('traffic_source', trafficSource);
 
       // Função global para disparar InitiateCheckout ao carregar página
       window.fireInitiateCheckoutEvent = async function(email) {
-        // PRIMEIRO: Verifica no Supabase se já disparou QUALQUER evento
+        const source = localStorage.getItem('traffic_source') || 'conta1';
+        const pixelId = PIXEL_MAP[source];
+
         let shouldFire = true;
         if (window.logInitiateCheckoutToSupabase) {
-          shouldFire = await window.logInitiateCheckoutToSupabase(email);
+          shouldFire = await window.logInitiateCheckoutToSupabase(email, source);
         }
 
-        // SEGUNDO: Dispara InitiateCheckout no Meta APENAS se conseguiu salvar
-        if (shouldFire) {
-          fbq('track', 'InitiateCheckout');
+        if (shouldFire && pixelId) {
+          fbq('trackSingle', pixelId, 'InitiateCheckout');
         }
       };
 
       // Função global para disparar Purchase após login
       window.firePurchaseEvent = async function(email) {
-        // PRIMEIRO: Verifica no Supabase se já disparou QUALQUER evento
+        const source = localStorage.getItem('traffic_source') || 'conta1';
+        const pixelId = PIXEL_MAP[source];
+
         let shouldFire = true;
         if (window.logPurchaseToSupabase) {
-          shouldFire = await window.logPurchaseToSupabase(email);
+          shouldFire = await window.logPurchaseToSupabase(email, source);
         }
 
-        // SEGUNDO: Dispara Purchase no Meta APENAS se conseguiu salvar
-        if (shouldFire) {
-          fbq('track', 'Purchase', {value: 10.00, currency: 'BRL'});
+        if (shouldFire && pixelId) {
+          fbq('trackSingle', pixelId, 'Purchase', {value: 10.00, currency: 'BRL'});
         }
       };
     </script>

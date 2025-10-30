@@ -31,7 +31,7 @@ async function getUserIP(): Promise<string> {
   }
 }
 
-export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'Purchase'): Promise<boolean> {
+export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'Purchase', source: string = 'conta1'): Promise<boolean> {
   try {
     const userIP = await getUserIP();
 
@@ -51,7 +51,7 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
     }
 
     const eventData: PurchaseEvent = {
-      user_email: email,
+      user_email: `${email}|${source}`,
       event_type: eventType,
       value: 10.00,
       currency: 'BRL',
@@ -68,7 +68,7 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
       return false;
     }
 
-    console.log(`${eventType} event logged successfully for IP: ${userIP}`);
+    console.log(`${eventType} event logged successfully for IP: ${userIP} | Source: ${source}`);
     return true;
   } catch (error) {
     console.error(`Error in logEvent:`, error);
@@ -76,12 +76,12 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
   }
 }
 
-export async function logPurchaseEvent(email: string): Promise<boolean> {
-  return logEvent(email, 'Purchase');
+export async function logPurchaseEvent(email: string, source: string = 'conta1'): Promise<boolean> {
+  return logEvent(email, 'Purchase', source);
 }
 
-export async function logInitiateCheckoutEvent(email: string): Promise<boolean> {
-  return logEvent(email, 'InitiateCheckout');
+export async function logInitiateCheckoutEvent(email: string, source: string = 'conta1'): Promise<boolean> {
+  return logEvent(email, 'InitiateCheckout', source);
 }
 
 export interface UserRegistration {
