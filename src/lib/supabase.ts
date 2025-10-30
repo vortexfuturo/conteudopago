@@ -20,29 +20,25 @@ export interface PurchaseEvent {
   ip_address?: string;
 }
 
-function generateDeviceFingerprint(): string {
-  const components = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width,
-    screen.height,
-    screen.colorDepth,
-    new Date().getTimezoneOffset(),
-  ];
-
-  const fingerprint = components.join('|');
-  const hash = btoa(fingerprint).substring(0, 32);
-  return hash;
+async function getUserIP(): Promise<string> {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('Error getting IP:', error);
+    return 'unknown';
+  }
 }
 
 export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'Purchase'): Promise<boolean> {
   try {
-    const deviceFingerprint = generateDeviceFingerprint();
+    const userIP = await getUserIP();
 
     const { data: existingEvents, error: queryError } = await supabase
       .from('purchase_events')
       .select('id, event_type, created_at')
-      .eq('user_agent', deviceFingerprint);
+      .eq('ip_address', userIP);
 
     if (queryError) {
       console.error('Error querying events:', queryError);
@@ -50,7 +46,7 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
     }
 
     if (existingEvents && existingEvents.length > 0) {
-      console.log(`Event already fired for this device: ${existingEvents[0].event_type}`);
+      console.log(`Event already fired for this IP: ${existingEvents[0].event_type}`);
       return false;
     }
 
@@ -59,7 +55,8 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
       event_type: eventType,
       value: 10.00,
       currency: 'BRL',
-      user_agent: deviceFingerprint,
+      user_agent: navigator.userAgent,
+      ip_address: userIP,
     };
 
     const { error } = await supabase
@@ -71,7 +68,7 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
       return false;
     }
 
-    console.log(`${eventType} event logged successfully`);
+    console.log(`${eventType} event logged successfully for IP: ${userIP}`);
     return true;
   } catch (error) {
     console.error(`Error in logEvent:`, error);
