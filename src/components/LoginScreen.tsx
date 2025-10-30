@@ -132,9 +132,6 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           </div>
           <h1 className="text-gray-800 text-2xl font-bold mb-1">Larissa Silva</h1>
           <p className="text-blue-600 text-base font-medium">@larissasilva_</p>
-          <p className="text-gray-700 text-sm mt-3 leading-relaxed px-4">
-            Amor, seu acesso já tá liberado 😘 digita sua senha abaixo e aproveita mais de 70 vídeos e muitas fotinhas só minhas…
-          </p>
         </div>
 
         <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-pink-500/30 p-6 shadow-2xl">
