@@ -20,37 +20,46 @@ export interface PurchaseEvent {
   ip_address?: string;
 }
 
-function generateSessionId(): string {
-  let sessionId = localStorage.getItem('privacy_session_id');
-  if (!sessionId) {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-    localStorage.setItem('privacy_session_id', sessionId);
-  }
-  return sessionId;
+function generateDeviceFingerprint(): string {
+  const components = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width,
+    screen.height,
+    screen.colorDepth,
+    new Date().getTimezoneOffset(),
+  ];
+
+  const fingerprint = components.join('|');
+  const hash = btoa(fingerprint).substring(0, 32);
+  return hash;
 }
 
 export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'Purchase'): Promise<boolean> {
   try {
-    const sessionId = generateSessionId();
-    const uniqueIdentifier = `${sessionId}_${navigator.userAgent}`;
+    const deviceFingerprint = generateDeviceFingerprint();
 
-    const { data: existingEvent } = await supabase
+    const { data: existingEvents, error: queryError } = await supabase
       .from('purchase_events')
       .select('id, event_type, created_at')
-      .eq('user_email', uniqueIdentifier)
-      .maybeSingle();
+      .eq('user_agent', deviceFingerprint);
 
-    if (existingEvent) {
-      console.log(`Event already fired for this session: ${existingEvent.event_type}`);
+    if (queryError) {
+      console.error('Error querying events:', queryError);
+      return false;
+    }
+
+    if (existingEvents && existingEvents.length > 0) {
+      console.log(`Event already fired for this device: ${existingEvents[0].event_type}`);
       return false;
     }
 
     const eventData: PurchaseEvent = {
-      user_email: uniqueIdentifier,
+      user_email: email,
       event_type: eventType,
       value: 10.00,
       currency: 'BRL',
-      user_agent: navigator.userAgent,
+      user_agent: deviceFingerprint,
     };
 
     const { error } = await supabase
