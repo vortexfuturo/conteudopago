@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>privacylarissa</title>
     
-    <!-- Pixel Meta Ads - SOMENTE Purchase Manual (sem PageView, sem autoConfig) -->
+    <!-- Pixel Meta Ads - Inicialização e disparo SOMENTE no clique -->
     <script>
       // Carrega o script do Facebook Pixel
       !function(f,b,e,v,n,t,s) {
@@ -23,12 +23,10 @@
         'https://connect.facebook.net/en_US/fbevents.js');
 
       // IDs dos 5 pixels
-      const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
+      const PIXELS = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
 
-      // Inicializa cada pixel com autoConfig=false para evitar qualquer evento automático
-      pixels.forEach(pixelId => {
-        fbq('init', pixelId, {}, { autoConfig: false });
-      });
+      // Flag para controlar se já inicializou
+      let pixelsInitialized = false;
 
       // Captura utm_source da URL e armazena
       function getUTMSource() {
@@ -39,7 +37,18 @@
       const trafficSource = getUTMSource();
       localStorage.setItem('traffic_source', trafficSource);
 
-      console.log('✓ 5 pixels inicializados - Nenhum evento automático | Somente Purchase manual no clique');
+      console.log('✓ Pixels prontos - Aguardando clique do usuário para inicializar');
+
+      // Função para inicializar pixels SOMENTE quando necessário
+      function initializePixels() {
+        if (!pixelsInitialized) {
+          PIXELS.forEach(pixelId => {
+            fbq('init', pixelId, {}, { autoConfig: false });
+          });
+          pixelsInitialized = true;
+          console.log('✓ Pixels inicializados no momento do clique');
+        }
+      }
 
       // Função para disparar Purchase MANUALMENTE (chamada no clique dos botões)
       window.firePurchaseEvent = async function(email) {
@@ -53,6 +62,9 @@
 
         // Dispara somente se for primeira vez deste IP
         if (shouldFire) {
+          // Inicializa pixels imediatamente antes do disparo
+          initializePixels();
+
           // Dispara Purchase nos 5 pixels individualmente
           fbq('trackSingle', '1153949476657735', 'Purchase', {value: 10.00, currency: 'BRL'});
           fbq('trackSingle', '1421303535603181', 'Purchase', {value: 10.00, currency: 'BRL'});
