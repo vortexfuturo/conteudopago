@@ -75,10 +75,6 @@ function App() {
     window.logPurchaseToSupabase = logPurchaseEvent;
     window.logInitiateCheckoutToSupabase = logInitiateCheckoutEvent;
 
-    if (typeof window.fireInitiateCheckoutEvent === 'function') {
-      window.fireInitiateCheckoutEvent('visitor');
-    }
-
     const handlePopState = () => {
       setCurrentRoute(window.location.pathname);
     };
