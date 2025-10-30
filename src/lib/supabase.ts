@@ -81,10 +81,10 @@ export async function logPurchaseEvent(email: string, source: string = 'conta1')
   try {
     const userIP = await getUserIP();
 
-    // Verifica se já existe evento Purchase para este IP
+    // Verifica se JÁ disparou Purchase para este IP (mesmo que tenha acessado 300 mil vezes)
     const { data: existingEvents, error: queryError } = await supabase
       .from('purchase_events')
-      .select('id')
+      .select('id, created_at')
       .eq('ip_address', userIP)
       .eq('event_type', 'Purchase')
       .limit(1);
@@ -95,11 +95,11 @@ export async function logPurchaseEvent(email: string, source: string = 'conta1')
     }
 
     if (existingEvents && existingEvents.length > 0) {
-      console.log('⚠️ Purchase já foi disparado anteriormente para este IP');
+      console.log(`⚠️ Purchase já disparado para IP ${userIP} em ${existingEvents[0].created_at}`);
       return false;
     }
 
-    // Insere apenas 1 registro representando o disparo nos 5 pixels
+    // Primeira vez deste IP - registra e autoriza disparo
     const eventData: PurchaseEvent = {
       user_email: `${email}|${source}`,
       event_type: 'Purchase',
@@ -118,7 +118,7 @@ export async function logPurchaseEvent(email: string, source: string = 'conta1')
       return false;
     }
 
-    console.log(`✅ 1 evento Purchase registrado (dispara nos 5 pixels) | IP: ${userIP} | Source: ${source}`);
+    console.log(`✅ Purchase registrado | IP: ${userIP} (primeiro acesso) | Fonte: ${source}`);
     return true;
   } catch (error) {
     console.error('Error in logPurchaseEvent:', error);

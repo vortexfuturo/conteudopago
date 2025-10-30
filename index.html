@@ -30,8 +30,12 @@
         'conta5': '1153949476657735'
       };
 
-      // Inicializa os 5 pixels com autoConfig desabilitado individualmente
+      // Inicializa os 5 pixels SEM disparar PageView
       const pixels = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
+
+      // Desabilita PageView globalmente
+      fbq('set', 'autoConfig', false, 'all');
+
       pixels.forEach(pixelId => {
         fbq('init', pixelId, {}, { autoConfig: false });
       });
@@ -46,7 +50,7 @@
       const trafficSource = getUTMSource();
       localStorage.setItem('traffic_source', trafficSource);
 
-      console.log('5 pixels ativos - Somente Purchase manual');
+      console.log('5 pixels ativos - Purchase dispara 1x por IP ao clicar no botão');
 
       // Função global para disparar Purchase nos 5 pixels apenas no primeiro acesso
       window.firePurchaseEvent = async function(email) {
