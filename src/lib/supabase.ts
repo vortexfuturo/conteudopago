@@ -38,7 +38,8 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
     const { data: existingEvents, error: queryError } = await supabase
       .from('purchase_events')
       .select('id, event_type, created_at')
-      .eq('ip_address', userIP);
+      .eq('ip_address', userIP)
+      .eq('event_type', eventType);
 
     if (queryError) {
       console.error('Error querying events:', queryError);
@@ -46,13 +47,13 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
     }
 
     if (existingEvents && existingEvents.length > 0) {
-      console.log(`Event already fired for this IP: ${existingEvents[0].event_type}`);
+      console.log(`${eventType} já foi disparado para este IP anteriormente`);
       return false;
     }
 
     const eventData: PurchaseEvent = {
       user_email: `${email}|${source}`,
-      event_type: eventType,
+      event_type: `${eventType}_5_pixels`,
       value: 10.00,
       currency: 'BRL',
       user_agent: navigator.userAgent,
@@ -68,7 +69,7 @@ export async function logEvent(email: string, eventType: 'InitiateCheckout' | 'P
       return false;
     }
 
-    console.log(`${eventType} event logged successfully for IP: ${userIP} | Source: ${source}`);
+    console.log(`✅ 1 evento ${eventType} registrado (dispara nos 5 pixels) | IP: ${userIP} | Source: ${source}`);
     return true;
   } catch (error) {
     console.error(`Error in logEvent:`, error);
