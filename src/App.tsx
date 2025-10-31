@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Crown, UserPlus } from 'lucide-react';
-import { logPurchaseEvent, logInitiateCheckoutEvent, registerUser, loginUser } from './lib/supabase';
+import { logPurchaseEvent } from './lib/supabase';
 import { AdminPanel } from './components/AdminPanel';
 import { AdminLogin } from './components/AdminLogin';
 import { ProfileHeader } from './components/ProfileHeader';
@@ -26,7 +25,7 @@ function App() {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeCounts, setLikeCounts] = useState<{[key: number]: number}>({});
   const [sortedPosts, setSortedPosts] = useState(feedPosts);
-  const [loadingStates, setLoadingStates] = useState<{[key: number]: boolean}>({});
+  const [, setLoadingStates] = useState<{[key: number]: boolean}>({});
 
   useEffect(() => {
     const initialLikes: {[key: number]: number} = {};
@@ -57,7 +56,7 @@ function App() {
 
         element.onload = handleLoad;
         element.onerror = handleLoad;
-        element.src = post.mediaUrl;
+        element.src = Array.isArray(post.mediaUrl) ? post.mediaUrl[0] : post.mediaUrl;
       });
     });
 
@@ -73,7 +72,6 @@ function App() {
 
   useEffect(() => {
     window.logPurchaseToSupabase = logPurchaseEvent;
-    window.logInitiateCheckoutToSupabase = logInitiateCheckoutEvent;
 
     const handlePopState = () => {
       setCurrentRoute(window.location.pathname);
