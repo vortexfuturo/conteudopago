@@ -25,8 +25,16 @@
       // IDs dos 5 pixels
       const PIXELS = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
 
-      // Flag para controlar se já inicializou
-      let pixelsInitialized = false;
+      // Inicializa TODOS os 5 pixels no carregamento (sem disparar eventos)
+      console.log('🔄 Inicializando 5 pixels Meta Ads...');
+      PIXELS.forEach((pixelId, index) => {
+        fbq('init', pixelId, {}, {
+          autoConfig: false,
+          debug: false
+        });
+        console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
+      });
+      console.log('✅ TODOS os 5 pixels prontos! Aguardando login para disparar Purchase...');
 
       // Captura utm_source da URL e armazena
       function getUTMSource() {
@@ -37,28 +45,7 @@
       const trafficSource = getUTMSource();
       localStorage.setItem('traffic_source', trafficSource);
 
-      console.log('✓ Pixels prontos - Aguardando clique do usuário para inicializar');
-
-      // Função para inicializar pixels e aguardar
-      function initializePixels() {
-        return new Promise((resolve) => {
-          if (!pixelsInitialized) {
-            console.log('🔄 Inicializando 5 pixels...');
-            PIXELS.forEach((pixelId, index) => {
-              fbq('init', pixelId, {}, { autoConfig: false });
-              console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
-            });
-            pixelsInitialized = true;
-            console.log('✅ TODOS os 5 pixels inicializados com sucesso!');
-            // Aguarda um momento para garantir que os pixels estão prontos
-            setTimeout(resolve, 100);
-          } else {
-            resolve();
-          }
-        });
-      }
-
-      // Função para disparar Purchase MANUALMENTE (chamada no clique dos botões)
+      // Função para disparar Purchase MANUALMENTE (chamada no login)
       window.firePurchaseEvent = async function(email) {
         const source = localStorage.getItem('traffic_source') || 'conta1';
 
@@ -70,32 +57,26 @@
 
         // Dispara somente se for primeira vez deste IP
         if (shouldFire) {
-          // Inicializa pixels e aguarda estarem prontos
-          await initializePixels();
+          console.log('');
+          console.log('🎯 DISPARANDO PURCHASE NOS 5 PIXELS META ADS');
+          console.log('📊 Valor: R$ 10,00 | Moeda: BRL');
+          console.log('📍 Fonte:', source);
+          console.log('');
 
-          // Dispara Purchase nos 5 pixels individualmente
-          console.log('🎯 Disparando evento Purchase nos 5 pixels...');
-          console.log('📊 Detalhes: Valor R$ 10,00 | Moeda: BRL');
-
-          // Dispara cada pixel individualmente
+          // Dispara Purchase em cada um dos 5 pixels
           PIXELS.forEach((pixelId, index) => {
             fbq('trackSingle', pixelId, 'Purchase', {
               value: 10.00,
               currency: 'BRL'
             });
-            console.log(`  ✅ Pixel ${index + 1}/5 - Purchase enviado: ${pixelId}`);
+            console.log(`✅ [${index + 1}/5] Purchase enviado para pixel: ${pixelId}`);
           });
 
           console.log('');
-          console.log('🎉 RESUMO: Purchase de R$ 10,00 disparado com sucesso nos 5 pixels!');
-          console.log('📍 Fonte de tráfego:', source);
+          console.log('🎉 CONCLUÍDO! Purchase disparado nos 5 pixels com sucesso!');
           console.log('');
-          console.log('IDs dos pixels que receberam o evento:');
-          PIXELS.forEach((pixelId, index) => {
-            console.log(`  ${index + 1}. ${pixelId}`);
-          });
         } else {
-          console.log('⚠️ Purchase bloqueado - IP já disparou anteriormente');
+          console.log('⚠️ Purchase NÃO foi disparado - Este IP já realizou Purchase anteriormente');
         }
       };
     </script>
