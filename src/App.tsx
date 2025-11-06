@@ -135,8 +135,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black pb-16">
-      <div className="bg-black border-b border-gray-800 sticky top-0 z-20">
+    <div className="min-h-screen bg-white pb-16">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-center">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent tracking-tight" translate="no">
@@ -146,7 +146,7 @@ function App() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto bg-black">
+      <div className="max-w-md mx-auto bg-white">
         <ProfileHeader
           showFullBio={showFullBio}
           onToggleBio={() => setShowFullBio(!showFullBio)}
@@ -158,7 +158,7 @@ function App() {
         />
 
         {activeTab === 'feed' ? (
-          <div className="bg-black">
+          <div className="bg-white">
             {sortedPosts.map((post) => (
               <FeedPost
                 key={post.id}

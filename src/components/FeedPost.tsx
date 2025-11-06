@@ -32,7 +32,7 @@ export function FeedPost({
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   return (
-    <article className="bg-black border-b border-gray-900 mb-4">
+    <article className="bg-white border-b border-gray-200 mb-4">
       <div className="flex items-center justify-between px-3 py-2.5">
         <div className="flex items-center space-x-3">
           <img
@@ -42,13 +42,13 @@ export function FeedPost({
           />
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-semibold text-sm text-white">larissasilva_</span>
+              <span className="font-semibold text-sm text-gray-900">larissasilva_</span>
               <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
               <span className="text-gray-400 text-xs">{timeAgo}</span>
             </div>
           </div>
         </div>
-        <button className="text-gray-400 hover:text-white transition-colors">
+        <button className="text-gray-500 hover:text-gray-700 transition-colors">
           <MoreHorizontal className="w-5 h-5" />
         </button>
       </div>
@@ -140,30 +140,30 @@ export function FeedPost({
               className="hover:scale-110 transition-transform active:scale-95"
             >
               <Heart
-                className={`w-7 h-7 ${isLiked ? 'text-red-500 fill-current' : 'text-white'} transition-colors`}
+                className={`w-7 h-7 ${isLiked ? 'text-red-500 fill-current' : 'text-gray-900'} transition-colors`}
               />
             </button>
             <button className="hover:scale-110 transition-transform active:scale-95">
-              <MessageCircle className="w-7 h-7 text-white" />
+              <MessageCircle className="w-7 h-7 text-gray-900" />
             </button>
             <button className="hover:scale-110 transition-transform active:scale-95">
-              <Send className="w-7 h-7 text-white" />
+              <Send className="w-7 h-7 text-gray-900" />
             </button>
           </div>
           <button className="hover:scale-110 transition-transform active:scale-95">
-            <Bookmark className="w-6 h-6 text-white" />
+            <Bookmark className="w-6 h-6 text-gray-900" />
           </button>
         </div>
 
         <div className="space-y-1.5">
-          <button className="font-semibold text-sm text-white">
+          <button className="font-semibold text-sm text-gray-900">
             {likes.toLocaleString('pt-BR')} curtidas
           </button>
 
           {caption && (
             <div className="text-sm">
-              <span className="font-semibold text-white">larissasilva_ </span>
-              <span className="text-gray-300">{caption}</span>
+              <span className="font-semibold text-gray-900">larissasilva_ </span>
+              <span className="text-gray-700">{caption}</span>
             </div>
           )}
         </div>

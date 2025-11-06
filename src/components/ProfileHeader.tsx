@@ -19,7 +19,7 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <div className="bg-black border-b border-gray-900">
+    <div className="bg-white border-b border-gray-200">
       <div className="px-4 pt-4 pb-4">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-4">
@@ -27,7 +27,7 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
               <img
                 src="https://s3.chefexpress.site/vortex/perfil-modelonova.jpg"
                 alt="Profile"
-                className="w-20 h-20 rounded-full object-cover ring-4 ring-pink-500 ring-offset-2"
+                className="w-20 h-20 rounded-full object-cover ring-4 ring-pink-500 ring-offset-2 ring-offset-white"
               />
               <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-pink-500 to-red-500 rounded-full p-1.5">
                 <Crown className="w-4 h-4 text-white" />
@@ -35,7 +35,7 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
               <div className="absolute top-0 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white mb-0.5">
+              <h2 className="text-lg font-bold text-gray-900 mb-0.5">
                 Larissa Silva
               </h2>
               <div className="flex items-center space-x-2 mb-1">
@@ -53,21 +53,21 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
 
         <div className="grid grid-cols-3 gap-4 mb-3 py-3">
           <div className="text-center">
-            <div className="font-bold text-base text-white">73</div>
-            <div className="text-xs text-gray-400">Posts</div>
+            <div className="font-bold text-base text-gray-900">73</div>
+            <div className="text-xs text-gray-500">Posts</div>
           </div>
-          <div className="text-center border-x border-gray-800">
-            <div className="font-bold text-base text-white">2.4K</div>
-            <div className="text-xs text-gray-400">Curtidas</div>
+          <div className="text-center border-x border-gray-200">
+            <div className="font-bold text-base text-gray-900">2.4K</div>
+            <div className="text-xs text-gray-500">Curtidas</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-base text-white">892</div>
-            <div className="text-xs text-gray-400">Fãs</div>
+            <div className="font-bold text-base text-gray-900">892</div>
+            <div className="text-xs text-gray-500">Fãs</div>
           </div>
         </div>
 
         <div className="mb-3">
-          <p className="text-gray-300 text-sm leading-relaxed">
+          <p className="text-gray-700 text-sm leading-relaxed">
             {showFullBio ? (
               <>
                 Sou a Larissa, tenho 22 aninhos 😘✨ toda tímida de cara, mas bem safadinha quando me solto… adoro tirar fotinhas íntimas no meu quarto e mandar só pra quem me trata com carinho 💋
@@ -82,13 +82,13 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
           </p>
           <button
             onClick={onToggleBio}
-            className="text-gray-400 text-sm font-medium mt-1 hover:text-gray-300 transition-colors"
+            className="text-gray-600 text-sm font-medium mt-1 hover:text-gray-800 transition-colors"
           >
             {showFullBio ? 'Mostrar menos' : 'Ler mais'}
           </button>
         </div>
 
-        <div className="flex items-center space-x-3 mb-3 pb-3 border-b border-gray-900">
+        <div className="flex items-center space-x-3 mb-3 pb-3 border-b border-gray-200">
           <a
             href="#"
             className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white hover:scale-110 transition-transform"
@@ -117,7 +117,7 @@ export function ProfileHeader({ showFullBio, onToggleBio }: ProfileHeaderProps) 
             <DollarSign className="w-4 h-4" />
             <span>Enviar Mimo</span>
           </button>
-          <button className="flex items-center justify-center space-x-1.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-sm">
+          <button className="flex items-center justify-center space-x-1.5 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-sm border border-gray-300">
             <MessageCircle className="w-4 h-4" />
             <span>Mensagem</span>
           </button>
