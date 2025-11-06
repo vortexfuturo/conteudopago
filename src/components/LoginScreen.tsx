@@ -150,6 +150,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             {!showRegisterForm ? (
               <>
                 <div className="mb-4">
+                  <div className="bg-gradient-to-r from-pink-50 to-red-50 border-2 border-pink-400 rounded-xl p-4 mb-4 text-center">
+                    <p className="text-gray-800 text-sm font-medium leading-relaxed">
+                      Oi amor clica aqui no botão abaixo para acessar meus conteúdos e me ver peladinha gozando pra você 🤤💦
+                    </p>
+                  </div>
+
                   <button
                     type="button"
                     onClick={async () => {
@@ -159,7 +165,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                       }
                       onLogin(email);
                     }}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 text-sm mb-3"
+                    className="relative w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 text-sm mb-3 animate-pulse"
                   >
                     ENTRAR SEM CRIAR CONTA
                   </button>
