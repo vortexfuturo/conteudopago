@@ -139,7 +139,7 @@ function App() {
       <div className="bg-black border-b border-gray-800 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent tracking-tight" translate="no">
               Larissa Privacy
             </h1>
           </div>
