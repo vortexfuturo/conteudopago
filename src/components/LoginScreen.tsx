@@ -152,7 +152,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 <div className="mb-4">
                   <div className="bg-gradient-to-r from-pink-50 to-red-50 border-2 border-pink-400 rounded-xl p-4 mb-4 text-center">
                     <p className="text-gray-800 text-sm font-medium leading-relaxed">
-                      Oi amor clica aqui no botão abaixo para acessar meus conteúdos e me ver peladinha gozando pra você 🤤💦
+                      Oi amor, clica aqui no botão abaixo para acessar meus conteúdos e me ver peladinha gozando pra você 🤤💦
                     </p>
                   </div>
 
@@ -170,14 +170,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     ENTRAR SEM CRIAR CONTA
                   </button>
 
-                  <button
-                    onClick={() => setShowRegisterForm(true)}
-                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 mb-3 text-sm"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    <span>CRIAR CONTA NOVA</span>
-                  </button>
-                  <div className="relative">
+                  <div className="relative mb-3">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-gray-300"></div>
                     </div>
@@ -251,6 +244,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                       </button>
                     </form>
                   </details>
+
+                  <button
+                    onClick={() => setShowRegisterForm(true)}
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 text-sm"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    <span>CRIAR CONTA NOVA</span>
+                  </button>
                 </div>
               </>
             ) : (
