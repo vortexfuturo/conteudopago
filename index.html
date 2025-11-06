@@ -5,7 +5,35 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>privacylarissa</title>
-    
+
+    <!-- Captura e Persistência de UTMs -->
+    <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const utms = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+      utms.forEach(key => {
+        const value = params.get(key);
+        if (value) {
+          localStorage.setItem(key, value);
+        }
+      });
+
+      window.keepUTM = function(url) {
+        const stored = {};
+        utms.forEach(key => {
+          const value = localStorage.getItem(key);
+          if (value) stored[key] = value;
+        });
+        const query = new URLSearchParams(stored).toString();
+        if (query) {
+          const separator = url.includes('?') ? '&' : '?';
+          return url + separator + query;
+        }
+        return url;
+      };
+    })();
+    </script>
+
     <!-- Pixel Meta Ads - Inicialização e disparo SOMENTE no clique -->
     <script>
       // Carrega o script do Facebook Pixel
