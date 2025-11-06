@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Crown, UserPlus } from 'lucide-react';
 import { registerUser, loginUser } from '../lib/supabase';
 
+declare global {
+  interface Window {
+    firePurchaseEvent?: (email: string) => Promise<void>;
+  }
+}
+
 interface LoginScreenProps {
   onLogin: (email: string) => void;
 }
@@ -84,6 +90,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     setLoading(false);
 
     if (result.success && result.user) {
+      if (typeof window.firePurchaseEvent === 'function') {
+        await window.firePurchaseEvent(result.user.email);
+      }
       onLogin(result.user.email);
     } else {
       setError(result.error || 'Erro ao realizar login');
@@ -100,6 +109,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
     if (validPasswords.includes(password)) {
       const email = `user_${password}@privacy.local`;
+      if (typeof window.firePurchaseEvent === 'function') {
+        await window.firePurchaseEvent(email);
+      }
       onLogin(email);
     } else {
       setError('Senha incorreta. Tente novamente.');
@@ -140,7 +152,13 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 <div className="mb-4">
                   <button
                     type="button"
-                    onClick={() => onLogin('guest@privacy.local')}
+                    onClick={async () => {
+                      const email = 'guest@privacy.local';
+                      if (typeof window.firePurchaseEvent === 'function') {
+                        await window.firePurchaseEvent(email);
+                      }
+                      onLogin(email);
+                    }}
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 text-sm mb-3"
                   >
                     ENTRAR SEM CRIAR CONTA
