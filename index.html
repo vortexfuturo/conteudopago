@@ -35,94 +35,47 @@
     })();
     </script>
 
-    <!-- Pixel Meta Ads - Inicialização e disparo SOMENTE no clique -->
+    <!-- Meta Pixels -->
     <script>
-      // Carrega o script do Facebook Pixel
-      !function(f,b,e,v,n,t,s) {
-        if(f.fbq)return;n=f.fbq=function() {
-          n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments)
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
         };
-        if(!f._fbq)f._fbq=n;
-        n.push=n;
-        n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)
-      }(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
+        if (!f._fbq) f._fbq = n;
+        n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+        t = b.createElement(e); t.async = !0;
+        t.src = v; s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-      // IDs dos 5 pixels
-      const PIXELS = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
+      const pixels = [
+        '1421303535603181',
+        '636629812664247',
+        '825290560048721',
+        '804023795319915',
+        '1153949476657735'
+      ];
 
-      // Inicializa TODOS os 5 pixels no carregamento (SEM PageView automático)
-      console.log('🔄 Inicializando 5 pixels Meta Ads...');
-      PIXELS.forEach((pixelId, index) => {
-        fbq('init', pixelId, {}, {
-          autoConfig: false,
-          debug: false
-        });
-        fbq('set', 'autoConfig', false, pixelId);
-        console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
-      });
-
-      // Captura utm_source da URL e armazena
-      function getUTMSource() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('utm_source') || 'conta1';
-      }
-
-      const trafficSource = getUTMSource();
-      localStorage.setItem('traffic_source', trafficSource);
-
-      // Verifica se já disparou Purchase (usando cookie)
       function hasPurchaseFired() {
         return document.cookie.includes('purchase_fired=true');
       }
 
-      // Marca que Purchase foi disparado (cookie expira em 365 dias)
       function markPurchaseFired() {
         const expires = new Date();
         expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
         document.cookie = `purchase_fired=true; expires=${expires.toUTCString()}; path=/`;
       }
 
-      // Dispara Purchase AUTOMATICAMENTE ao carregar a página (apenas 1x por navegador)
-      function fireAutoPurchase() {
-        // Verifica se já disparou antes (via cookie)
-        if (hasPurchaseFired()) {
-          console.log('⚠️ Purchase NÃO foi disparado - Este navegador já realizou Purchase anteriormente');
-          return;
-        }
-
-        const source = localStorage.getItem('traffic_source') || 'conta1';
-
-        console.log('');
-        console.log('🎯 DISPARANDO PURCHASE AUTOMÁTICO NOS 5 PIXELS META ADS');
-        console.log('📊 Valor: R$ 10,00 | Moeda: BRL');
-        console.log('📍 Fonte:', source);
-        console.log('');
-
-        // Dispara Purchase em cada um dos 5 pixels
-        PIXELS.forEach((pixelId, index) => {
-          fbq('trackSingle', pixelId, 'Purchase', {
-            value: 10.00,
-            currency: 'BRL'
-          });
-          console.log(`✅ [${index + 1}/5] Purchase enviado para pixel: ${pixelId}`);
+      if (!hasPurchaseFired()) {
+        pixels.forEach(id => {
+          fbq('init', id);
+          fbq('set', 'autoConfig', false, id);
+          fbq('trackSingle', id, 'Purchase', { value: 10.00, currency: 'BRL' });
         });
-
-        // Marca como disparado para não repetir
         markPurchaseFired();
-
-        console.log('');
-        console.log('🎉 CONCLUÍDO! Purchase disparado nos 5 pixels com sucesso!');
-        console.log('🍪 Cookie definido - próximas visitas não dispararão novamente');
-        console.log('');
       }
-
-      // Executa ao carregar a página
-      fireAutoPurchase();
     </script>
+    <!-- End Meta Pixels -->
   </head>
   <body>
     <div id="root"></div>
