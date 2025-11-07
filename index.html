@@ -54,13 +54,14 @@
       // IDs dos 5 pixels
       const PIXELS = ['1421303535603181', '636629812664247', '825290560048721', '804023795319915', '1153949476657735'];
 
-      // Inicializa TODOS os 5 pixels no carregamento (sem disparar eventos)
+      // Inicializa TODOS os 5 pixels no carregamento (SEM PageView automático)
       console.log('🔄 Inicializando 5 pixels Meta Ads...');
       PIXELS.forEach((pixelId, index) => {
         fbq('init', pixelId, {}, {
           autoConfig: false,
           debug: false
         });
+        fbq('set', 'autoConfig', false, pixelId);
         console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
       });
 
