@@ -2,5 +2,5 @@
 
 interface Window {
   firePurchaseEvent?: (email: string) => Promise<void>;
-  logPurchaseToSupabase?: (email: string) => Promise<boolean>;
+  logPurchaseToSupabase?: (email: string, source: string) => Promise<boolean>;
 }
