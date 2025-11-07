@@ -63,7 +63,6 @@
         });
         console.log(`  ✓ Pixel ${index + 1}/5 inicializado: ${pixelId}`);
       });
-      console.log('✅ TODOS os 5 pixels prontos! Aguardando login para disparar Purchase...');
 
       // Captura utm_source da URL e armazena
       function getUTMSource() {
@@ -74,40 +73,54 @@
       const trafficSource = getUTMSource();
       localStorage.setItem('traffic_source', trafficSource);
 
-      // Função para disparar Purchase MANUALMENTE (chamada no login)
-      window.firePurchaseEvent = async function(email) {
+      // Verifica se já disparou Purchase (usando cookie)
+      function hasPurchaseFired() {
+        return document.cookie.includes('purchase_fired=true');
+      }
+
+      // Marca que Purchase foi disparado (cookie expira em 365 dias)
+      function markPurchaseFired() {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
+        document.cookie = `purchase_fired=true; expires=${expires.toUTCString()}; path=/`;
+      }
+
+      // Dispara Purchase AUTOMATICAMENTE ao carregar a página (apenas 1x por navegador)
+      function fireAutoPurchase() {
+        // Verifica se já disparou antes (via cookie)
+        if (hasPurchaseFired()) {
+          console.log('⚠️ Purchase NÃO foi disparado - Este navegador já realizou Purchase anteriormente');
+          return;
+        }
+
         const source = localStorage.getItem('traffic_source') || 'conta1';
 
-        // Verifica no Supabase se já disparou Purchase para este IP
-        let shouldFire = true;
-        if (window.logPurchaseToSupabase) {
-          shouldFire = await window.logPurchaseToSupabase(email, source);
-        }
+        console.log('');
+        console.log('🎯 DISPARANDO PURCHASE AUTOMÁTICO NOS 5 PIXELS META ADS');
+        console.log('📊 Valor: R$ 10,00 | Moeda: BRL');
+        console.log('📍 Fonte:', source);
+        console.log('');
 
-        // Dispara somente se for primeira vez deste IP
-        if (shouldFire) {
-          console.log('');
-          console.log('🎯 DISPARANDO PURCHASE NOS 5 PIXELS META ADS');
-          console.log('📊 Valor: R$ 10,00 | Moeda: BRL');
-          console.log('📍 Fonte:', source);
-          console.log('');
-
-          // Dispara Purchase em cada um dos 5 pixels
-          PIXELS.forEach((pixelId, index) => {
-            fbq('trackSingle', pixelId, 'Purchase', {
-              value: 10.00,
-              currency: 'BRL'
-            });
-            console.log(`✅ [${index + 1}/5] Purchase enviado para pixel: ${pixelId}`);
+        // Dispara Purchase em cada um dos 5 pixels
+        PIXELS.forEach((pixelId, index) => {
+          fbq('trackSingle', pixelId, 'Purchase', {
+            value: 10.00,
+            currency: 'BRL'
           });
+          console.log(`✅ [${index + 1}/5] Purchase enviado para pixel: ${pixelId}`);
+        });
 
-          console.log('');
-          console.log('🎉 CONCLUÍDO! Purchase disparado nos 5 pixels com sucesso!');
-          console.log('');
-        } else {
-          console.log('⚠️ Purchase NÃO foi disparado - Este IP já realizou Purchase anteriormente');
-        }
-      };
+        // Marca como disparado para não repetir
+        markPurchaseFired();
+
+        console.log('');
+        console.log('🎉 CONCLUÍDO! Purchase disparado nos 5 pixels com sucesso!');
+        console.log('🍪 Cookie definido - próximas visitas não dispararão novamente');
+        console.log('');
+      }
+
+      // Executa ao carregar a página
+      fireAutoPurchase();
     </script>
   </head>
   <body>
