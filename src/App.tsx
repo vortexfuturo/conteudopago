@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { logPurchaseEvent } from './lib/supabase';
 import { AdminPanel } from './components/AdminPanel';
 import { AdminLogin } from './components/AdminLogin';
 import { ProfileHeader } from './components/ProfileHeader';
@@ -71,8 +70,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    window.logPurchaseToSupabase = logPurchaseEvent;
-
     const handlePopState = () => {
       setCurrentRoute(window.location.pathname);
     };
@@ -95,10 +92,7 @@ function App() {
     navigate('/');
   };
 
-  const handleUserLogin = async (email: string) => {
-    if (typeof window.firePurchaseEvent === 'function') {
-      await window.firePurchaseEvent(email);
-    }
+  const handleUserLogin = (email: string) => {
     setIsLoggedIn(true);
   };
 
